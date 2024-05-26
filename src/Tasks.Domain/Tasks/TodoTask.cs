@@ -1,10 +1,13 @@
-﻿using Tasks.Domain.ValueObjects;
+﻿using Tasks.Domain.States;
+using Tasks.Domain.ValueObjects;
 
-namespace Tasks.Domain
+namespace Tasks.Domain.Tasks
 {
-    public class Task
+    public class TodoTask
     {
         //Tasks could be standalone, like “Buy Milk” or part of a much larger project.
+
+        public TaskId TaskId { get; private init; }
 
         public string Title { get; private set; } = string.Empty;
 
@@ -30,6 +33,17 @@ namespace Tasks.Domain
 
         //todo: use State 
         public State State { get; private set; }
+
+        public void SetState(State state)
+        {
+            //todo: add states validation
+            //if (!State.CouldSetNextOrPrev())
+            //{
+            //    throw exceptions
+            //}
+            this.State = state;
+        }
+
         public bool IsStarted { get; private set; }
         public bool IsCompleted { get; private set; }
         public bool IsVerified { get; private set; }
@@ -44,5 +58,12 @@ namespace Tasks.Domain
         //todo: Search
         //todo: task management tool
 
+        public static TodoTask Create()
+        {
+            return new TodoTask
+            {
+                TaskId = new TaskId(Guid.NewGuid()),
+            };
+        }
     }
 }

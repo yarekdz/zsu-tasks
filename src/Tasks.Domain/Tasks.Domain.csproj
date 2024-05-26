@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Tasks.Domain.Exceptions\Tasks.DomainErrors.csproj" />
+  </ItemGroup>
+
 </Project>

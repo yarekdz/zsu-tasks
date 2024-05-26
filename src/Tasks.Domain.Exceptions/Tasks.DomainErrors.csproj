@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="NewFolder\" />
+    <ProjectReference Include="..\Tasks.Domain.Shared\Tasks.Domain.Shared.csproj" />
   </ItemGroup>
 
 </Project>
