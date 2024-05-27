@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tasks.Domain.Shared;
+using Tasks.Domain.TaskDetails;
 using Tasks.Domain.Tasks;
 
 namespace Tasks.Domain.States

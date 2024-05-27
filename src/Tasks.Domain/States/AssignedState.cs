@@ -1,4 +1,5 @@
 ﻿using Tasks.Domain.Shared;
+using Tasks.Domain.TaskDetails;
 using Tasks.Domain.Tasks;
 
 namespace Tasks.Domain.States;
@@ -9,7 +10,7 @@ public class AssignedState : ITaskState
 
     public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation)
     {
-        if (estimation.Duration == null)
+        if (estimation.WorkDuration == null)
         {
             return Result.Failure<TodoTask>(DomainErrors.TaskErrors.InvalidEstimatedDuration);
         }

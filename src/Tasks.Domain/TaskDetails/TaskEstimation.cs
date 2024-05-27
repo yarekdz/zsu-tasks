@@ -1,18 +1,17 @@
 ﻿using Tasks.Domain.ValueObjects;
 
-namespace Tasks.Domain.Tasks
+namespace Tasks.Domain.TaskDetails
 {
     public class TaskEstimation
     {
         //task breakdown
         //3 point estimate 
 
-        public DateTime? StartDate { get; private set; }
+        public DateTime StartDateTime { get; set; }
 
-        public DateTime DueDate { get; private set; }
-        public DateTime DueTime { get; private set; }
+        public DateTime DueDateTime { get; set; }
 
-        public Duration Duration { get; private set; }
+        public Duration? WorkDuration { get; set; }
 
         //3 points estimation
         public double Optimistic { get; set; }
