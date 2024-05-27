@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tasks.Domain.ValueObjects
+﻿namespace Tasks.Domain.ValueObjects
 {
     public record Priority
     {
@@ -14,14 +8,14 @@ namespace Tasks.Domain.ValueObjects
         private Priority(int value) => Value = value;
         public int Value { get; init; }
 
-        public static Priority? Create(int value)
+        public static Priority Create(int? value = null)
         {
-            if (value is < MinPriority or > MaxPriority )
+            if (value is null or < MinPriority or > MaxPriority )
             {
-                return null;
+                return new Priority(MinPriority);
             }
 
-            return new Priority(value);
+            return new Priority((int)value);
         }
     }
 }

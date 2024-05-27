@@ -1,6 +1,6 @@
-﻿namespace Tasks.Domain;
+﻿namespace Tasks.Domain.Tasks;
 
-public class TaskAssign
+public class TaskAssignees
 {
     public Person TaskOwner { get; private set; }
     public Person Assignee { get; private set; }
