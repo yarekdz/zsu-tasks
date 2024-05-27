@@ -5,11 +5,11 @@ namespace Tasks.Domain.TaskDetails
     public class TaskEstimation
     {
         //task breakdown
-        //3 point estimate 
+        //todo: 3 point estimate 
 
         public DateTime StartDateTime { get; set; }
 
-        public DateTime DueDateTime { get; set; }
+        public DateTime EndDateTime { get; set; }
 
         public Duration? WorkDuration { get; set; }
 

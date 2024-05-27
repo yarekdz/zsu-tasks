@@ -4,11 +4,11 @@ namespace Tasks.Domain.TaskDetails
 {
     public class TaskMainInfo
     {
-        public string Title { get; set; } = string.Empty;
+        public string? Title { get; set; }
 
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
-        public Category Category { get; set; } = new Category();
+        public Category? Category { get; set; }
 
         public Priority Priority { get; set; } = Priority.Create();
 

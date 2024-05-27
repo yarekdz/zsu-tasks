@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tasks.Domain.Shared;
+﻿using Tasks.Domain.Shared;
 using Tasks.Domain.TaskDetails;
-using Tasks.Domain.Tasks;
+using Tasks.DomainErrors;
 
 namespace Tasks.Domain.States
 {
@@ -17,7 +12,7 @@ namespace Tasks.Domain.States
         {
             if (assignees.Assignee == null)
             {
-                return Result.Failure<TodoTask>(DomainErrors.TaskErrors.InvalidAssignee);
+                return Result.Failure<TodoTask>(TaskErrors.Assigne.InvalidAssignee);
             }
 
             //todo: more domain errors to validate
@@ -32,16 +27,16 @@ namespace Tasks.Domain.States
 
         public Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo)
         {
-            throw new InvalidOperationException("Task is already created.");
+            return Result.Failure<TodoTask>(TaskErrors.Create.TaskIsAlreadyCreated);
         }
 
-        public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation) => throw new InvalidOperationException("Cannot estimate a task that is not assigned.");
-        public Result<TodoTask> AddDependencies(TodoTask task, TaskDependency dependency) => throw new InvalidOperationException("Cannot schedule a task that is not assigned.");
-        public Result<TodoTask> StartWork(TodoTask task) => throw new InvalidOperationException("Cannot start work on a task that is not assigned.");
-        public Result<TodoTask> CompleteWork(TodoTask task) => throw new InvalidOperationException("Cannot complete work on a task that is not assigned.");
-        public Result<TodoTask> Verify(TodoTask task) => throw new InvalidOperationException("Cannot verify a task that is not assigned.");
-        public Result<TodoTask> Approve(TodoTask task) => throw new InvalidOperationException("Cannot approve a task that is not assigned.");
-        public Result<TodoTask> Release(TodoTask task) => throw new InvalidOperationException("Cannot release a task that is not assigned.");
-        public Result<TodoTask> Terminate(TodoTask task) => throw new InvalidOperationException("Cannot terminate a task that is not assigned.");
+        public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation) => Result.Failure<TodoTask>(TaskErrors.Assigne.CanNotPerformActionNotAssignedTask);
+        public Result<TodoTask> AddDependencies(TodoTask task, TaskDependency dependency) => Result.Failure<TodoTask>(TaskErrors.Assigne.CanNotPerformActionNotAssignedTask);
+        public Result<TodoTask> StartWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Assigne.CanNotPerformActionNotAssignedTask);
+        public Result<TodoTask> CompleteWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Assigne.CanNotPerformActionNotAssignedTask);
+        public Result<TodoTask> Verify(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Assigne.CanNotPerformActionNotAssignedTask);
+        public Result<TodoTask> Approve(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Assigne.CanNotPerformActionNotAssignedTask);
+        public Result<TodoTask> Release(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Assigne.CanNotPerformActionNotAssignedTask);
+        public Result<TodoTask> Terminate(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Assigne.CanNotPerformActionNotAssignedTask);
     }
 }

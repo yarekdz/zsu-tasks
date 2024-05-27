@@ -8,5 +8,9 @@ namespace Tasks.Domain.Tasks
 
 
         public IReadOnlyList<Person> Assignees { get; private set; }
+
+        protected ComplexTodoTask(Guid id) : base(id)
+        {
+        }
     }
 }

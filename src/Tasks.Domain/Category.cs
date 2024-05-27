@@ -1,5 +1,7 @@
 ﻿namespace Tasks.Domain;
 
-public class Category
+public enum Category
 {
+    Default,
+    HighRisky
 }

@@ -5,6 +5,8 @@
         private const int MinPriority = 1;
         private const int MaxPriority = 5;
 
+        public static Priority HightestPriority = Create(MaxPriority);
+
         private Priority(int value) => Value = value;
         public int Value { get; init; }
 

@@ -1,12 +1,11 @@
 ﻿using Tasks.Domain.Shared;
 using Tasks.Domain.TaskDetails;
-using Tasks.Domain.Tasks;
 
 namespace Tasks.Domain.States
 {
     public interface ITaskState
     {
-        public string Title { get; }
+        string Title { get; }
         Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo);
         Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees);
         Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation);

@@ -1,21 +1,32 @@
 ﻿using Tasks.Domain.Shared;
 using Tasks.Domain.TaskDetails;
-using Tasks.Domain.Tasks;
+using Tasks.Domain.ValueObjects;
+using Tasks.DomainErrors;
 
 namespace Tasks.Domain.States
 {
     public class ConceptInactiveState : ITaskState
     {
-        public string Title => "Init state";
+        public string Title => "Concept Init state";
 
         public Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo)
         {
-            if (string.IsNullOrEmpty(mainInfo.Description))
+            if (string.IsNullOrEmpty(mainInfo.Title))
             {
-                return Result.Failure<TodoTask>(DomainErrors.TaskErrors.InvalidDescription);
+                return Result.Failure<TodoTask>(TaskErrors.Create.InvalidTitle);
             }
 
-            //todo: more domain errors to validate
+            if (string.IsNullOrEmpty(mainInfo.Description))
+            {
+                return Result.Failure<TodoTask>(TaskErrors.Create.InvalidDescription);
+            }
+
+            //HighRisky category tasks should have  5 highest Priority
+            if (mainInfo.Category is Category.HighRisky
+                && mainInfo.Priority != Priority.HightestPriority)
+            {
+                return Result.Failure<TodoTask>(TaskErrors.Create.InvalidPriorityForHighRiskyCategory);
+            }
 
             task.SetMainInfo(mainInfo);
 
@@ -25,14 +36,14 @@ namespace Tasks.Domain.States
             return Result.Success(task);
         }
 
-        public Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees) => throw new InvalidOperationException("Cannot assign a task that is not created.");
-        public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation) => throw new InvalidOperationException("Cannot estimate a task that is not created.");
-        public Result<TodoTask> AddDependencies(TodoTask task, TaskDependency dependency) => throw new InvalidOperationException("Cannot add dependency to a task that is not created.");
-        public Result<TodoTask> StartWork(TodoTask task) => throw new InvalidOperationException("Cannot start work on a task that is not created.");
-        public Result<TodoTask> CompleteWork(TodoTask task) => throw new InvalidOperationException("Cannot complete work on a task that is not created.");
-        public Result<TodoTask> Verify(TodoTask task) => throw new InvalidOperationException("Cannot verify a task that is not created.");
-        public Result<TodoTask> Approve(TodoTask task) => throw new InvalidOperationException("Cannot approve a task that is not created.");
-        public Result<TodoTask> Release(TodoTask task) => throw new InvalidOperationException("Cannot release a task that is not created.");
-        public Result<TodoTask> Terminate(TodoTask task) => throw new InvalidOperationException("Cannot terminate a task that is not created.");
+        public Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
+        public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
+        public Result<TodoTask> AddDependencies(TodoTask task, TaskDependency dependency) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
+        public Result<TodoTask> StartWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
+        public Result<TodoTask> CompleteWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
+        public Result<TodoTask> Verify(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
+        public Result<TodoTask> Approve(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
+        public Result<TodoTask> Release(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
+        public Result<TodoTask> Terminate(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
     }
 }

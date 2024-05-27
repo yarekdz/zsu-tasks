@@ -1,4 +1,5 @@
-﻿using Tasks.Domain.States;
+﻿using Tasks.Domain.Shared;
+using Tasks.Domain.States;
 using Tasks.Domain.TaskDetails;
 using Tasks.Domain.ValueObjects;
 
@@ -44,7 +45,7 @@ namespace Tasks.Domain
             _state = state;
         }
 
-        private TodoTask(Guid id)
+        protected TodoTask(Guid id)
         {
             Id = new TaskId(id);
 
@@ -80,7 +81,12 @@ namespace Tasks.Domain
 
         public void Estimate(TaskEstimation estimation)
         {
-            _state.Estimate(this, estimation);
+            var stateEstimateResult = _state.Estimate(this, estimation);
+
+            if (!stateEstimateResult.IsSuccess)
+            {
+                throw new DomainValidationException(stateEstimateResult.Error);
+            }
         }
 
         public void AddDependencies(TaskDependency dependency)
@@ -102,7 +108,7 @@ namespace Tasks.Domain
 
             if (Estimation.WorkDuration != null)
             {
-                Estimation.WorkDuration = new Duration(Estimation.WorkDuration.Start, Estimation.DueDateTime);
+                Estimation.WorkDuration = new Duration(Estimation.WorkDuration.Start, Estimation.EndDateTime);
                 Flags.IsCompleted = true;
             }
             UpdateCompletionRate();
