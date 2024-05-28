@@ -9,7 +9,14 @@ namespace Tasks.Domain.States
         Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo);
         Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees);
         Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation);
-        Result<TodoTask> AddDependencies(TodoTask task, TaskDependency dependency);
+
+        #region v2
+
+        //todo v2
+        //Result<TodoTask> AddDependencies(TodoTask task, TaskDependency dependency);
+
+        #endregion
+
         Result<TodoTask> StartWork(TodoTask task);
         Result<TodoTask> CompleteWork(TodoTask task);
         Result<TodoTask> Verify(TodoTask task);

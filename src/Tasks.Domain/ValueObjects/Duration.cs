@@ -1,4 +1,7 @@
-﻿namespace Tasks.Domain.ValueObjects
+﻿using System;
+using Tasks.Domain.Shared;
+
+namespace Tasks.Domain.ValueObjects
 {
     //The duration is the total time it takes for work to start and finish.
     public class Duration
@@ -6,15 +9,19 @@
         public DateTime Start { get; }
         public DateTime End { get; }
 
-        public Duration(DateTime start, DateTime end)
+        public Duration(DateTime? start, DateTime? end)
         {
-            if (end < start)
+            if (!start.HasValue || !end.HasValue)
             {
-                throw new ArgumentException("End time must be after start time");
+                throw new DomainValidationException(DomainErrors.TaskErrors.Estimate.InvalidDuration);
+            }
+            if (start > end)
+            {
+                throw new DomainValidationException(DomainErrors.TaskErrors.Estimate.StartDateCouldNotBeGreaterThanEndDate);
             }
 
-            Start = start;
-            End = end;
+            Start = start.Value;
+            End = end.Value;
         }
 
         public TimeSpan TotalDuration => End - Start;
@@ -33,6 +40,37 @@
         public override int GetHashCode()
         {
             return HashCode.Combine(Start, End);
+        }
+
+        public override string ToString()
+        {
+            int days = TotalDuration.Days;
+            int hours = TotalDuration.Hours;
+            int minutes = TotalDuration.Minutes;
+            int seconds = TotalDuration.Seconds;
+
+
+            string formattedString = "Duration: ";
+
+            if (days > 0)
+            {
+                formattedString += $"{days}d ";
+            }
+            if (hours > 0)
+            {
+                formattedString += $"{hours}h ";
+            }
+            if (minutes > 0)
+            {
+                formattedString += $"{minutes}m";
+            }
+
+            if (seconds > 0 || formattedString == "")
+            {
+                formattedString += $"{seconds}s";
+            }
+
+            return formattedString.Trim();
         }
     }
 }

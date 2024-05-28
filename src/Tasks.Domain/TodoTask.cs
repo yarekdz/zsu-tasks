@@ -15,11 +15,11 @@ namespace Tasks.Domain
 
         public TaskEstimation Estimation { get; private set; } = new();
 
-        public TaskDateTimeStats DateTimeStats { get; private init; } = new();
+        public TaskDateTimeStats Stats { get; private init; } = new();
 
         public TaskFlags Flags { get; private set; } = new();
 
-        #region ver.2
+        #region v2
 
         //public TaskDependency Dependency { get; private set; } = new();
         //public IReadOnlyList<Comment> Comments { get; private set; }
@@ -30,6 +30,9 @@ namespace Tasks.Domain
         //todo: notifications
         //todo: Search
         //todo: task management tool
+        //todo: Lock / Delete / Terminate
+        //todo: Log Work mechanism
+        //todo: log any action
 
         #endregion
 
@@ -57,17 +60,24 @@ namespace Tasks.Domain
         {
             var newTask = new TodoTask(Guid.NewGuid())
             {
-                DateTimeStats = new TaskDateTimeStats
+                Stats = new TaskDateTimeStats
                 {
                     CreatedDate = DateTime.UtcNow,
-                    CompletionRate = new CompletionRate(0)
                 },
             };
 
             var conceptInactiveState = new ConceptInactiveState();
 
             newTask.SetState(conceptInactiveState);
-            conceptInactiveState.Create(newTask, mainInfo);
+            
+            var initStateResult = conceptInactiveState.Create(newTask, mainInfo);
+
+            if (!initStateResult.IsSuccess)
+            {
+                throw new DomainValidationException(initStateResult.Error);
+            }
+
+            newTask.MainInfo = mainInfo;
 
             return newTask;
         }
@@ -76,97 +86,139 @@ namespace Tasks.Domain
 
         public void Assign(TaskAssignees assignees)
         {
-            _state.Assign(this, assignees);
+            var assignStateResult = _state.Assign(this, assignees);
+
+            if (!assignStateResult.IsSuccess)
+            {
+                throw new DomainValidationException(assignStateResult.Error);
+            }
+
+            Assignees = assignees;
         }
 
         public void Estimate(TaskEstimation estimation)
         {
-            var stateEstimateResult = _state.Estimate(this, estimation);
+            var estimateStateResult = _state.Estimate(this, estimation);
 
-            if (!stateEstimateResult.IsSuccess)
+            if (!estimateStateResult.IsSuccess)
             {
-                throw new DomainValidationException(stateEstimateResult.Error);
+                throw new DomainValidationException(estimateStateResult.Error);
             }
+
+            Estimation = estimation;
+            Estimation.EstimatedWorkDuration =
+                new Duration(estimation.EstimatedStartDateTime, estimation.EstimatedEndDateTime);
         }
 
-        public void AddDependencies(TaskDependency dependency)
-        {
-            _state.AddDependencies(this, dependency);
-        }
+        #region v2
+
+        //todo
+        //public void AddDependencies(TaskDependency dependency)
+        //{
+        //    var addDependenciesStateResult = _state.AddDependencies(this, dependency);
+
+        //    if (!addDependenciesStateResult.IsSuccess)
+        //    {
+        //        throw new DomainValidationException(addDependenciesStateResult.Error);
+        //    }
+        //}
+
+        #endregion
+
 
         public void StartWork()
         {
-            _state.StartWork(this);
+            var startWorkStateResult = _state.StartWork(this);
 
-            Estimation.WorkDuration = new Duration(Estimation.StartDateTime, Estimation.StartDateTime);
+            if (!startWorkStateResult.IsSuccess)
+            {
+                throw new DomainValidationException(startWorkStateResult.Error);
+            }
+
+            Stats.StartedDate = DateTime.UtcNow;
+           
             Flags.IsStarted = true;
         }
 
         public void CompleteWork()
         {
-            _state.CompleteWork(this);
+            var completeWorkStateResult = _state.CompleteWork(this);
 
-            if (Estimation.WorkDuration != null)
+            if (!completeWorkStateResult.IsSuccess)
             {
-                Estimation.WorkDuration = new Duration(Estimation.WorkDuration.Start, Estimation.EndDateTime);
-                Flags.IsCompleted = true;
+                throw new DomainValidationException(completeWorkStateResult.Error);
             }
-            UpdateCompletionRate();
+
+            Stats.CompletionDate = DateTime.UtcNow;
+            Stats.ActualWorkDuration = new Duration(Stats.StartedDate, Stats.CompletionDate);
+            
+            Flags.IsCompleted = true;
         }
 
         public void Verify()
         {
-            _state.Verify(this);
+            var verifyStateResult = _state.Verify(this);
+
+            if (!verifyStateResult.IsSuccess)
+            {
+                throw new DomainValidationException(verifyStateResult.Error);
+            }
+
+            Stats.VerifiedDate = DateTime.UtcNow;
 
             Flags.IsVerified = true;
         }
 
         public void Approve()
         {
-            _state.Approve(this);
+            var approveStateResult = _state.Approve(this);
+
+            if (!approveStateResult.IsSuccess)
+            {
+                throw new DomainValidationException(approveStateResult.Error);
+            }
+
+            Stats.ApprovedDate = DateTime.UtcNow;
 
             Flags.IsApproved = true;
         }
 
         public void Release()
         {
-            _state.Release(this);
+            var releaseStateResult = _state.Release(this);
+
+            if (!releaseStateResult.IsSuccess)
+            {
+                throw new DomainValidationException(releaseStateResult.Error);
+            }
+
+            Stats.ReleasedDate = DateTime.UtcNow;
 
             Flags.IsReleased = true;
         }
 
         public void Terminate()
         {
-            _state.Terminate(this);
+            var terminateStateResult = _state.Terminate(this);
+
+            if (!terminateStateResult.IsSuccess)
+            {
+                throw new DomainValidationException(terminateStateResult.Error);
+            }
 
             Flags.IsTerminated = true;
         }
 
-
-        public void SetMainInfo(TaskMainInfo mainInfo)
-        {
-            MainInfo = mainInfo;
-        }
-
-        public void SetAssignees(TaskAssignees assignees)
-        {
-            Assignees = assignees;
-        }
-
-        public void SetEstimation(TaskEstimation estimation)
-        {
-            Estimation = estimation;
-        }
-
-        public void UpdateCompletionRate()
-        {
-            if (Estimation.WorkDuration != null)
-            {
-                DateTimeStats.CompletionRate = CompletionRate.Calculate(Estimation.WorkDuration.Start, Estimation.WorkDuration.End, DateTime.Now);
-            }
-        }
-
         #endregion
 
+        public override string ToString()
+        {
+            return
+                $"TaskId: {Id.Value.ToString()} | Title: {MainInfo.Title} | Created: {Stats.CreatedDate:yyyy-MM-dd} | Status: {Status} | " +
+                $"Estimation: {Estimation.EstimatedWorkDuration} | " +
+               (Stats.StartedDate.HasValue ? $"Stats: WorkStarted: {Stats.StartedDate.Value:yyyy-MM-dd HH:mm} | ": "") +
+               (Stats.CompletionDate.HasValue ? $"WorkCompleted: {Stats.CompletionDate.Value:yyyy-MM-dd HH:mm} | " : "") +
+                $"{Stats.ActualWorkDuration}";
+        }
     }
 }

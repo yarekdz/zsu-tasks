@@ -1,4 +1,6 @@
-﻿namespace Tasks.Domain.ValueObjects
+﻿using Tasks.Domain.Shared;
+
+namespace Tasks.Domain.ValueObjects
 {
     public class CompletionRate
     {
@@ -10,7 +12,7 @@
         {
             if (rate is < 0 or > 100)
             {
-                throw new ArgumentOutOfRangeException(nameof(rate), "Rate must be between 0 and 100.");
+                throw new DomainValidationException(DomainErrors.TaskErrors.Estimate.InvalidRate);
             }
 
             Rate = rate;

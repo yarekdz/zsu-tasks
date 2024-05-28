@@ -6,28 +6,25 @@ namespace Tasks.Domain.States;
 
 public class AssignedState : ITaskState
 {
-    public string Title => "Assign";
+    public string Title => "Task Assigned state";
 
     public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation)
     {
-        if (estimation.StartDateTime > estimation.EndDateTime)
+        if (estimation.EstimatedStartDateTime > estimation.EstimatedEndDateTime)
         {
-            return Result.Failure<TodoTask>(TaskErrors.Estimate.StartDateCouldNotBeGreaterThanStartDate);
+            return Result.Failure<TodoTask>(TaskErrors.Estimate.StartDateCouldNotBeGreaterThanEndDate);
         }
 
         //todo: more domain errors to validate
 
-        task.SetEstimation(estimation);
-
         task.SetStatus(TodoTaskStatus.Estimated);
-        //todo:
-        //task.SetState(new EstimatedState());
+        task.SetState(new EstimatedState());
 
         return Result.Success(task);
     }
 
-    public Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo) => Result.Failure<TodoTask>(TaskErrors.Assigne.TaskIsAlreadyAssigned);
-    public Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees) => Result.Failure<TodoTask>(TaskErrors.Assigne.TaskIsAlreadyAssigned);
+    public Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo) => Result.Failure<TodoTask>(TaskErrors.Assignee.TaskIsAlreadyAssigned);
+    public Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees) => Result.Failure<TodoTask>(TaskErrors.Assignee.TaskIsAlreadyAssigned);
     public Result<TodoTask> AddDependencies(TodoTask task, TaskDependency dependency) => Result.Failure<TodoTask>(TaskErrors.Estimate.CanNotPerformActionNotEstimatedTask);
     public Result<TodoTask> StartWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Estimate.CanNotPerformActionNotEstimatedTask);
     public Result<TodoTask> CompleteWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Estimate.CanNotPerformActionNotEstimatedTask);

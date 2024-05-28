@@ -28,8 +28,6 @@ namespace Tasks.Domain.States
                 return Result.Failure<TodoTask>(TaskErrors.Create.InvalidPriorityForHighRiskyCategory);
             }
 
-            task.SetMainInfo(mainInfo);
-
             task.SetState(new CreatedState());
             task.SetStatus(TodoTaskStatus.Created);
 

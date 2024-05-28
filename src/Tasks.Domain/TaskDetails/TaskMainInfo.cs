@@ -12,6 +12,5 @@ namespace Tasks.Domain.TaskDetails
 
         public Priority Priority { get; set; } = Priority.Create();
 
-
     }
 }
