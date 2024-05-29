@@ -37,16 +37,8 @@ namespace Tasks.Domain
         #endregion
 
         public TodoTaskStatus Status { get; private set; }
-        public void SetStatus(TodoTaskStatus status)
-        {
-            Status = status;
-        }
-
+       
         private ITaskState _state;
-        public void SetState(ITaskState state)
-        {
-            _state = state;
-        }
 
         protected TodoTask(Guid id)
         {
@@ -54,20 +46,18 @@ namespace Tasks.Domain
 
             _state = new ConceptInactiveState();
             Status = TodoTaskStatus.ConceptInactive;
+
+            Stats = new TaskDateTimeStats
+            {
+                CreatedDate = DateTime.UtcNow,
+            };
         }
 
         public static TodoTask Create(TaskMainInfo mainInfo)
         {
-            var newTask = new TodoTask(Guid.NewGuid())
-            {
-                Stats = new TaskDateTimeStats
-                {
-                    CreatedDate = DateTime.UtcNow,
-                },
-            };
+            var newTask = new TodoTask(Guid.NewGuid());
 
             var conceptInactiveState = new ConceptInactiveState();
-
             newTask.SetState(conceptInactiveState);
             
             var initStateResult = conceptInactiveState.Create(newTask, mainInfo);
@@ -80,6 +70,12 @@ namespace Tasks.Domain
             newTask.MainInfo = mainInfo;
 
             return newTask;
+        }
+
+        public void SetState(ITaskState state)
+        {
+            _state = state;
+            Status = state.Status;
         }
 
         #region Task Actions
@@ -136,7 +132,6 @@ namespace Tasks.Domain
             }
 
             Stats.StartedDate = DateTime.UtcNow;
-           
             Flags.IsStarted = true;
         }
 
@@ -151,7 +146,6 @@ namespace Tasks.Domain
 
             Stats.CompletionDate = DateTime.UtcNow;
             Stats.ActualWorkDuration = new Duration(Stats.StartedDate, Stats.CompletionDate);
-            
             Flags.IsCompleted = true;
         }
 
@@ -165,7 +159,6 @@ namespace Tasks.Domain
             }
 
             Stats.VerifiedDate = DateTime.UtcNow;
-
             Flags.IsVerified = true;
         }
 
@@ -179,7 +172,6 @@ namespace Tasks.Domain
             }
 
             Stats.ApprovedDate = DateTime.UtcNow;
-
             Flags.IsApproved = true;
         }
 
@@ -193,7 +185,6 @@ namespace Tasks.Domain
             }
 
             Stats.ReleasedDate = DateTime.UtcNow;
-
             Flags.IsReleased = true;
         }
 

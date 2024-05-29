@@ -7,11 +7,11 @@ namespace Tasks.Domain.States;
 public class WorkStartedState : ITaskState
 {
     public string Title => "Work Started state";
+    public TodoTaskStatus Status => TodoTaskStatus.WorkStarted;
 
     public Result<TodoTask> CompleteWork(TodoTask task)
     {
 
-        task.SetStatus(TodoTaskStatus.WorkCompleted);
         task.SetState(new WorkCompletedState());
 
         return Result.Success(task);

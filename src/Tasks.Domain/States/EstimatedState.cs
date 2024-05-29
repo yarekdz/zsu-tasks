@@ -7,12 +7,12 @@ namespace Tasks.Domain.States;
 public class EstimatedState : ITaskState
 {
     public string Title => "Task Estimated State";
+    public TodoTaskStatus Status => TodoTaskStatus.Estimated;
 
     public Result<TodoTask> StartWork(TodoTask task)
     {
 
 
-        task.SetStatus(TodoTaskStatus.WorkStarted);
         task.SetState(new WorkStartedState());
 
         return Result.Success(task);

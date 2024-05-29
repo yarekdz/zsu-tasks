@@ -7,6 +7,7 @@ namespace Tasks.Domain.States;
 public class AssignedState : ITaskState
 {
     public string Title => "Task Assigned state";
+    public TodoTaskStatus Status => TodoTaskStatus.Assigned;
 
     public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation)
     {
@@ -17,7 +18,6 @@ public class AssignedState : ITaskState
 
         //todo: more domain errors to validate
 
-        task.SetStatus(TodoTaskStatus.Estimated);
         task.SetState(new EstimatedState());
 
         return Result.Success(task);

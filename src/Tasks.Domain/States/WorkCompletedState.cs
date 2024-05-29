@@ -7,6 +7,7 @@ namespace Tasks.Domain.States;
 public class WorkCompletedState : ITaskState
 {
     public string Title => "Work Completed state";
+    public TodoTaskStatus Status => TodoTaskStatus.WorkCompleted;
 
     public Result<TodoTask> Verify(TodoTask task)
     {

@@ -8,6 +8,7 @@ namespace Tasks.Domain.States
     public class ConceptInactiveState : ITaskState
     {
         public string Title => "Concept Init state";
+        public TodoTaskStatus Status => TodoTaskStatus.ConceptInactive;
 
         public Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo)
         {
@@ -29,7 +30,6 @@ namespace Tasks.Domain.States
             }
 
             task.SetState(new CreatedState());
-            task.SetStatus(TodoTaskStatus.Created);
 
             return Result.Success(task);
         }

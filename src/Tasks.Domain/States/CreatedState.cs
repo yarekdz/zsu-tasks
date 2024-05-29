@@ -7,6 +7,7 @@ namespace Tasks.Domain.States
     public class CreatedState : ITaskState
     {
         public string Title => "Task Created state";
+        public TodoTaskStatus Status => TodoTaskStatus.Created;
 
         public Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees)
         {
@@ -22,7 +23,6 @@ namespace Tasks.Domain.States
 
             //todo: more domain errors to validate
 
-            task.SetStatus(TodoTaskStatus.Assigned);
             task.SetState(new AssignedState());
 
             return Result.Success(task);
