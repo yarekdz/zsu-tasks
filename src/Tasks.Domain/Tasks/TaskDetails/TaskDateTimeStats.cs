@@ -1,6 +1,6 @@
 ﻿using Tasks.Domain.ValueObjects;
 
-namespace Tasks.Domain.TaskDetails
+namespace Tasks.Domain.Tasks.TaskDetails
 {
     public class TaskDateTimeStats
     {

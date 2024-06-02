@@ -1,4 +1,4 @@
-﻿namespace Tasks.Domain.TaskDetails
+﻿namespace Tasks.Domain.Tasks.TaskDetails
 {
     public class TaskFlags
     {

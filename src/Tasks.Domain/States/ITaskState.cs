@@ -1,5 +1,6 @@
 ﻿using Tasks.Domain.Shared;
-using Tasks.Domain.TaskDetails;
+using Tasks.Domain.Tasks;
+using Tasks.Domain.Tasks.TaskDetails;
 
 namespace Tasks.Domain.States
 {

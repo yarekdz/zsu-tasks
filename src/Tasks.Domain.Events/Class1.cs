@@ -1,4 +1,4 @@
-﻿namespace Tasks.Domain.Abstractions
+﻿namespace Tasks.Domain.Events
 {
     public class Class1
     {

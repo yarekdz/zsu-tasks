@@ -1,21 +1,23 @@
-﻿using Tasks.Domain.Shared;
+﻿using Tasks.Domain.Abstractions;
+using Tasks.Domain.Events.Tasks;
+using Tasks.Domain.Shared;
 using Tasks.Domain.States;
-using Tasks.Domain.TaskDetails;
+using Tasks.Domain.Tasks.TaskDetails;
 using Tasks.Domain.ValueObjects;
 
-namespace Tasks.Domain
+namespace Tasks.Domain.Tasks
 {
-    public class TodoTask
+    public class TodoTask : Entity
     {
         public TaskId Id { get; }
 
-        public TaskMainInfo MainInfo { get; private set; } = new();
+        public TaskMainInfo MainInfo { get; private set; }
 
         public TaskAssignees Assignees { get; private set; } = new();
 
         public TaskEstimation Estimation { get; private set; } = new();
 
-        public TaskDateTimeStats Stats { get; private init; } = new();
+        public TaskDateTimeStats Stats { get; private init; }
 
         public TaskFlags Flags { get; private set; } = new();
 
@@ -37,14 +39,14 @@ namespace Tasks.Domain
         #endregion
 
         public TodoTaskStatus Status { get; private set; }
-       
-        private ITaskState _state;
+        public ITaskState State { get; private set; }
 
-        protected TodoTask(Guid id)
+        protected TodoTask(Guid id, TaskMainInfo mainInfo)
         {
             Id = new TaskId(id);
+            MainInfo = mainInfo;
 
-            _state = new ConceptInactiveState();
+            State = new ConceptInactiveState();
             Status = TodoTaskStatus.ConceptInactive;
 
             Stats = new TaskDateTimeStats
@@ -55,7 +57,7 @@ namespace Tasks.Domain
 
         public static TodoTask Create(TaskMainInfo mainInfo)
         {
-            var newTask = new TodoTask(Guid.NewGuid());
+            var newTask = new TodoTask(Guid.NewGuid(), mainInfo);
 
             var conceptInactiveState = new ConceptInactiveState();
             newTask.SetState(conceptInactiveState);
@@ -69,12 +71,14 @@ namespace Tasks.Domain
 
             newTask.MainInfo = mainInfo;
 
+            newTask.Raise(new TaskCreatedDomainEvent(newTask.Id.Value));
+
             return newTask;
         }
 
         public void SetState(ITaskState state)
         {
-            _state = state;
+            State = state;
             Status = state.Status;
         }
 
@@ -82,7 +86,7 @@ namespace Tasks.Domain
 
         public void Assign(TaskAssignees assignees)
         {
-            var assignStateResult = _state.Assign(this, assignees);
+            var assignStateResult = State.Assign(this, assignees);
 
             if (!assignStateResult.IsSuccess)
             {
@@ -94,7 +98,7 @@ namespace Tasks.Domain
 
         public void Estimate(TaskEstimation estimation)
         {
-            var estimateStateResult = _state.Estimate(this, estimation);
+            var estimateStateResult = State.Estimate(this, estimation);
 
             if (!estimateStateResult.IsSuccess)
             {
@@ -124,7 +128,7 @@ namespace Tasks.Domain
 
         public void StartWork()
         {
-            var startWorkStateResult = _state.StartWork(this);
+            var startWorkStateResult = State.StartWork(this);
 
             if (!startWorkStateResult.IsSuccess)
             {
@@ -133,11 +137,13 @@ namespace Tasks.Domain
 
             Stats.StartedDate = DateTime.UtcNow;
             Flags.IsStarted = true;
+
+            //todo: Raise(new WorkStartedDomainEvent(Guid.NewGuid(), Id);
         }
 
         public void CompleteWork()
         {
-            var completeWorkStateResult = _state.CompleteWork(this);
+            var completeWorkStateResult = State.CompleteWork(this);
 
             if (!completeWorkStateResult.IsSuccess)
             {
@@ -151,7 +157,7 @@ namespace Tasks.Domain
 
         public void Verify()
         {
-            var verifyStateResult = _state.Verify(this);
+            var verifyStateResult = State.Verify(this);
 
             if (!verifyStateResult.IsSuccess)
             {
@@ -164,7 +170,7 @@ namespace Tasks.Domain
 
         public void Approve()
         {
-            var approveStateResult = _state.Approve(this);
+            var approveStateResult = State.Approve(this);
 
             if (!approveStateResult.IsSuccess)
             {
@@ -177,7 +183,7 @@ namespace Tasks.Domain
 
         public void Release()
         {
-            var releaseStateResult = _state.Release(this);
+            var releaseStateResult = State.Release(this);
 
             if (!releaseStateResult.IsSuccess)
             {
@@ -190,7 +196,7 @@ namespace Tasks.Domain
 
         public void Terminate()
         {
-            var terminateStateResult = _state.Terminate(this);
+            var terminateStateResult = State.Terminate(this);
 
             if (!terminateStateResult.IsSuccess)
             {

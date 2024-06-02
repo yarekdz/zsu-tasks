@@ -1,4 +1,5 @@
-﻿using Tasks.Domain.ValueObjects;
+﻿using Tasks.Domain.Tasks.TaskDetails;
+using Tasks.Domain.ValueObjects;
 
 namespace Tasks.Domain.Tasks
 {
@@ -9,7 +10,7 @@ namespace Tasks.Domain.Tasks
 
         public IReadOnlyList<Person> Assignees { get; private set; }
 
-        protected ComplexTodoTask(Guid id) : base(id)
+        protected ComplexTodoTask(Guid id, TaskMainInfo mainInfo) : base(id, mainInfo)
         {
         }
     }
