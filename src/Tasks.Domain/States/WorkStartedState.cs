@@ -1,7 +1,7 @@
 ﻿using Tasks.Domain.Shared;
 using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
-using Tasks.DomainErrors;
+using Tasks.Domain.Errors;
 
 namespace Tasks.Domain.States;
 

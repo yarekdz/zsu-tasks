@@ -2,8 +2,14 @@
 
 namespace Tasks.Domain.Tasks.TaskDetails
 {
-    public class TaskDateTimeStats
+    public class TaskStatistic
     {
+        public TaskStatistic(TaskId taskId)
+        {
+            TaskId = taskId;
+        }
+
+        public TaskId TaskId { get; }
         public DateTime CreatedDate { get; set; }
         public DateTime? StartedDate { get; set; }
         public DateTime? CompletionDate { get; set; }

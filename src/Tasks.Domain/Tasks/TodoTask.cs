@@ -13,11 +13,11 @@ namespace Tasks.Domain.Tasks
 
         public TaskMainInfo MainInfo { get; private set; }
 
-        public TaskAssignees Assignees { get; private set; } = new();
+        public TaskAssignees? Assignees { get; private set; }
 
-        public TaskEstimation Estimation { get; private set; } = new();
+        public TaskEstimation? Estimation { get; private set; }
 
-        public TaskDateTimeStats Stats { get; private init; }
+        public TaskStatistic? Stats { get; private set; }
 
         public TaskFlags Flags { get; private set; } = new();
 
@@ -38,7 +38,6 @@ namespace Tasks.Domain.Tasks
 
         #endregion
 
-        public TodoTaskStatus Status { get; private set; }
         public ITaskState State { get; private set; }
 
         protected TodoTask(Guid id, TaskMainInfo mainInfo)
@@ -47,9 +46,8 @@ namespace Tasks.Domain.Tasks
             MainInfo = mainInfo;
 
             State = new ConceptInactiveState();
-            Status = TodoTaskStatus.ConceptInactive;
 
-            Stats = new TaskDateTimeStats
+            Stats = new TaskStatistic(Id)
             {
                 CreatedDate = DateTime.UtcNow,
             };
@@ -79,7 +77,6 @@ namespace Tasks.Domain.Tasks
         public void SetState(ITaskState state)
         {
             State = state;
-            Status = state.Status;
         }
 
         #region Task Actions
@@ -211,11 +208,11 @@ namespace Tasks.Domain.Tasks
         public override string ToString()
         {
             return
-                $"TaskId: {Id.Value.ToString()} | Title: {MainInfo.Title} | Created: {Stats.CreatedDate:yyyy-MM-dd} | Status: {Status} | " +
-                $"Estimation: {Estimation.EstimatedWorkDuration} | " +
-               (Stats.StartedDate.HasValue ? $"Stats: WorkStarted: {Stats.StartedDate.Value:yyyy-MM-dd HH:mm} | ": "") +
-               (Stats.CompletionDate.HasValue ? $"WorkCompleted: {Stats.CompletionDate.Value:yyyy-MM-dd HH:mm} | " : "") +
-                $"{Stats.ActualWorkDuration}";
+                $"TaskId: {Id.Value.ToString()} | Title: {MainInfo.Title} | Created: {Stats?.CreatedDate:yyyy-MM-dd} | Status: {State.Status} | " +
+                $"Estimation: {Estimation?.EstimatedWorkDuration} | " +
+               (Stats is { StartedDate: { } } ? $"Stats: WorkStarted: {Stats?.StartedDate.Value:yyyy-MM-dd HH:mm} | ": "") +
+               (Stats is { CompletionDate: { } } ? $"WorkCompleted: {Stats?.CompletionDate.Value:yyyy-MM-dd HH:mm} | " : "") +
+                $"{Stats?.ActualWorkDuration}";
         }
     }
 }

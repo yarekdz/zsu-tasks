@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Tasks.Domain.Errors;
 using Tasks.Domain.Shared;
 
 namespace Tasks.Domain.ValueObjects
@@ -13,11 +13,11 @@ namespace Tasks.Domain.ValueObjects
         {
             if (!start.HasValue || !end.HasValue)
             {
-                throw new DomainValidationException(DomainErrors.TaskErrors.Estimate.InvalidDuration);
+                throw new DomainValidationException(TaskErrors.Estimate.InvalidDuration);
             }
             if (start > end)
             {
-                throw new DomainValidationException(DomainErrors.TaskErrors.Estimate.StartDateCouldNotBeGreaterThanEndDate);
+                throw new DomainValidationException(TaskErrors.Estimate.StartDateCouldNotBeGreaterThanEndDate);
             }
 
             Start = start.Value;

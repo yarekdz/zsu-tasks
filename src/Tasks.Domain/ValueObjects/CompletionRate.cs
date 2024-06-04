@@ -1,4 +1,5 @@
-﻿using Tasks.Domain.Shared;
+﻿using Tasks.Domain.Errors;
+using Tasks.Domain.Shared;
 
 namespace Tasks.Domain.ValueObjects
 {
@@ -12,7 +13,7 @@ namespace Tasks.Domain.ValueObjects
         {
             if (rate is < 0 or > 100)
             {
-                throw new DomainValidationException(DomainErrors.TaskErrors.Estimate.InvalidRate);
+                throw new DomainValidationException(TaskErrors.Estimate.InvalidRate);
             }
 
             Rate = rate;

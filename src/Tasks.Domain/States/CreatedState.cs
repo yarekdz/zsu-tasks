@@ -1,7 +1,7 @@
 ﻿using Tasks.Domain.Shared;
 using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
-using Tasks.DomainErrors;
+using Tasks.Domain.Errors;
 
 namespace Tasks.Domain.States
 {
@@ -12,14 +12,20 @@ namespace Tasks.Domain.States
 
         public Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees)
         {
-            if (assignees.Assignee == null)
+            if (string.IsNullOrEmpty(assignees.Assignee?.Email))
             {
                 return Result.Failure<TodoTask>(TaskErrors.Assignee.InvalidAssignee);
             }
 
-            if (assignees.Owner == null)
+            if (string.IsNullOrEmpty(assignees.Owner?.Email))
             {
                 return Result.Failure<TodoTask>(TaskErrors.Assignee.InvalidOwner);
+            }
+
+            if (task.Assignees?.Owner != null &&
+                !string.Equals(task.Assignees?.Owner?.Email, assignees.Owner.Email))
+            {
+                return Result.Failure<TodoTask>(TaskErrors.Assignee.CouldNotChangeOwner);
             }
 
             //todo: more domain errors to validate

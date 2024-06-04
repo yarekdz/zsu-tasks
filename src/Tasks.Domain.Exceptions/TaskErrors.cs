@@ -1,6 +1,6 @@
 ﻿using Tasks.Domain.Shared;
 
-namespace Tasks.DomainErrors
+namespace Tasks.Domain.Errors
 {
     public static class TaskErrors
     {
@@ -38,6 +38,9 @@ namespace Tasks.DomainErrors
 
             public static Error TaskIsAlreadyAssigned = new("AssignTask.TaskIsAlreadyAssigned",
                 "Task is already assigned.");
+
+            public static Error CouldNotChangeOwner = new("AssignTask.CouldNotChangeOwner",
+                "Could not change Owner.");
         }
 
         public static class Estimate

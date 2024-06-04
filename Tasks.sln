@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1_Domain", "1_Domain", "{CB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasks.Domain.Abstractions", "src\Tasks.Domain.Abstractions\Tasks.Domain.Abstractions.csproj", "{C661D304-8BBF-48E2-AA44-E6E0049EEE8D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasks.DomainErrors", "src\Tasks.Domain.Exceptions\Tasks.DomainErrors.csproj", "{9FE8E0CD-17B2-4853-87AC-050114475F83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasks.Domain.Errors", "src\Tasks.Domain.Exceptions\Tasks.Domain.Errors.csproj", "{9FE8E0CD-17B2-4853-87AC-050114475F83}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2_Application", "2_Application", "{9B758734-9B6C-48BB-9783-DF898E9EFD9E}"
 EndProject
@@ -23,9 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3_Infrastructure", "3_Infra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasks.Persistence", "src\Tasks.Persistence\Tasks.Persistence.csproj", "{2C0AE0B0-8641-4645-A019-E3AE18AF2C8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tasks.Application.Abstractions", "src\Tasks.Abstractions\Tasks.Application.Abstractions.csproj", "{6EE63023-9CBB-4EFC-9616-89F8021AFFE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasks.Application.Abstractions", "src\Tasks.Abstractions\Tasks.Application.Abstractions.csproj", "{6EE63023-9CBB-4EFC-9616-89F8021AFFE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tasks.Domain.Events", "src\Tasks.Domain.Events\Tasks.Domain.Events.csproj", "{02E16328-62F5-4025-92F9-D61DCFCD2CD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasks.Domain.Events", "src\Tasks.Domain.Events\Tasks.Domain.Events.csproj", "{02E16328-62F5-4025-92F9-D61DCFCD2CD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

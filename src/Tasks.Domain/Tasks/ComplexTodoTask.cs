@@ -8,7 +8,7 @@ namespace Tasks.Domain.Tasks
         public IReadOnlyList<TodoTask> BreakDownTasks { get; private set; }
 
 
-        public IReadOnlyList<Person> Assignees { get; private set; }
+        public IReadOnlyList<Person.Person> Assignees { get; private set; }
 
         protected ComplexTodoTask(Guid id, TaskMainInfo mainInfo) : base(id, mainInfo)
         {

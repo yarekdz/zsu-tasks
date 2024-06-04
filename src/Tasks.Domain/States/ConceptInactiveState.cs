@@ -2,7 +2,7 @@
 using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
 using Tasks.Domain.ValueObjects;
-using Tasks.DomainErrors;
+using Tasks.Domain.Errors;
 
 namespace Tasks.Domain.States
 {

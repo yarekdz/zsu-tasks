@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Tasks.Domain.Events\Tasks.Domain.Events.csproj" />
-    <ProjectReference Include="..\Tasks.Domain.Exceptions\Tasks.DomainErrors.csproj" />
+    <ProjectReference Include="..\Tasks.Domain.Exceptions\Tasks.Domain.Errors.csproj" />
     <ProjectReference Include="..\Tasks.Domain.Shared\Tasks.Domain.Shared.csproj" />
   </ItemGroup>
 
