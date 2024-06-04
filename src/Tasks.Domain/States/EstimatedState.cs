@@ -20,7 +20,6 @@ public class EstimatedState : ITaskState
     }
 
     public Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo) => Result.Failure<TodoTask>(TaskErrors.Estimate.TaskIsAlreadyEstimated);
-    public Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees) => Result.Failure<TodoTask>(TaskErrors.Estimate.TaskIsAlreadyEstimated);
     public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation) => Result.Failure<TodoTask>(TaskErrors.Estimate.TaskIsAlreadyEstimated);
     public Result<TodoTask> CompleteWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.WorkStart.CanNotPerformActionNotStartedWorkTask);
     public Result<TodoTask> Verify(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.WorkStart.CanNotPerformActionNotStartedWorkTask);

@@ -13,7 +13,7 @@ namespace Tasks.Application.Tasks.Create
         private readonly IUnitOfWork _unitOfWork;
 
         public CreateTaskCommandHandler(
-            ITaskCommandsRepository taskCommandsRepository, 
+            ITaskCommandsRepository taskCommandsRepository,
             IUnitOfWork unitOfWork)
         {
             _taskCommandsRepository = taskCommandsRepository;
@@ -23,7 +23,7 @@ namespace Tasks.Application.Tasks.Create
 
         public async Task<Result> Handle(CreateTaskCommand command, CancellationToken cancellationToken)
         {
-            var todoTask = TodoTask.Create(new TaskMainInfo(command.Title)
+            var todoTask = TodoTask.Create(new TaskMainInfo(command.Title, command.OwnerId, command.AssigneeId)
             {
                 Description = command.Description,
                 Category = command.Category,
@@ -36,5 +36,5 @@ namespace Tasks.Application.Tasks.Create
 
             return Result.Success();
         }
-}
+    }
 }

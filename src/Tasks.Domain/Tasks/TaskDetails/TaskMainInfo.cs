@@ -1,12 +1,15 @@
-﻿using Tasks.Domain.ValueObjects;
+﻿using Tasks.Domain.Person;
+using Tasks.Domain.ValueObjects;
 
 namespace Tasks.Domain.Tasks.TaskDetails
 {
     public class TaskMainInfo
     {
-        public TaskMainInfo(string title)
+        public TaskMainInfo(string title, PersonId ownerId, PersonId assigneeId)
         {
             Title = title;
+            OwnerId = ownerId;
+            AssigneeId = assigneeId;
         }
 
         public string Title { get; set; }
@@ -16,6 +19,9 @@ namespace Tasks.Domain.Tasks.TaskDetails
         public Category Category { get; set; } = Category.Default;
 
         public Priority Priority { get; set; } = Priority.Create();
+
+        public PersonId OwnerId { get; set; }
+        public PersonId AssigneeId { get; set; }
 
     }
 }

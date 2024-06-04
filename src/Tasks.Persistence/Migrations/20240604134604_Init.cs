@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tasks.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitMigration : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Person",
+                name: "Persons",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -20,7 +20,7 @@ namespace Tasks.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Person", x => x.Id);
+                    table.PrimaryKey("PK_Persons", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -32,8 +32,8 @@ namespace Tasks.Persistence.Migrations
                     MainInfo_Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     MainInfo_Category = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     MainInfo_Priority = table.Column<int>(type: "integer", nullable: false),
-                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AssigneeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    MainInfo_OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    MainInfo_AssigneeId = table.Column<Guid>(type: "uuid", nullable: false),
                     Estimation_EstimatedStartDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Estimation_EstimatedEndDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Stats_CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -48,34 +48,34 @@ namespace Tasks.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Tasks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tasks_Person_AssigneeId",
-                        column: x => x.AssigneeId,
-                        principalTable: "Person",
+                        name: "FK_Tasks_Persons_MainInfo_AssigneeId",
+                        column: x => x.MainInfo_AssigneeId,
+                        principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Tasks_Person_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "Person",
+                        name: "FK_Tasks_Persons_MainInfo_OwnerId",
+                        column: x => x.MainInfo_OwnerId,
+                        principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Person_Email",
-                table: "Person",
+                name: "IX_Persons_Email",
+                table: "Persons",
                 column: "Email",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_AssigneeId",
+                name: "IX_Tasks_MainInfo_AssigneeId",
                 table: "Tasks",
-                column: "AssigneeId");
+                column: "MainInfo_AssigneeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_OwnerId",
+                name: "IX_Tasks_MainInfo_OwnerId",
                 table: "Tasks",
-                column: "OwnerId");
+                column: "MainInfo_OwnerId");
         }
 
         /// <inheritdoc />
@@ -85,7 +85,7 @@ namespace Tasks.Persistence.Migrations
                 name: "Tasks");
 
             migrationBuilder.DropTable(
-                name: "Person");
+                name: "Persons");
         }
     }
 }

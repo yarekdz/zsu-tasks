@@ -17,7 +17,6 @@ public class WorkCompletedState : ITaskState
     }
 
     public Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo) => Result.Failure<TodoTask>(TaskErrors.WorkComplete.TaskIsAlreadyCompleted);
-    public Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees) => Result.Failure<TodoTask>(TaskErrors.WorkComplete.TaskIsAlreadyCompleted);
     public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation) => Result.Failure<TodoTask>(TaskErrors.WorkComplete.TaskIsAlreadyCompleted);
     public Result<TodoTask> StartWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.WorkComplete.TaskIsAlreadyCompleted);
     public Result<TodoTask> CompleteWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.WorkComplete.TaskIsAlreadyCompleted);

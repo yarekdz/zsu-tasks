@@ -10,38 +10,21 @@ namespace Tasks.Domain.States
         public string Title => "Task Created state";
         public TodoTaskStatus Status => TodoTaskStatus.Created;
 
-        public Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees)
+        public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation)
         {
-            if (string.IsNullOrEmpty(assignees.Assignee?.Email))
+            if (estimation.EstimatedStartDateTime > estimation.EstimatedEndDateTime)
             {
-                return Result.Failure<TodoTask>(TaskErrors.Assignee.InvalidAssignee);
+                return Result.Failure<TodoTask>(TaskErrors.Estimate.StartDateCouldNotBeGreaterThanEndDate);
             }
-
-            if (string.IsNullOrEmpty(assignees.Owner?.Email))
-            {
-                return Result.Failure<TodoTask>(TaskErrors.Assignee.InvalidOwner);
-            }
-
-            //todo
-            //if (task.OwnerId != null &&
-            //    !string.Equals(task.OwnerId, assignees.Owner.Email))
-            //{
-            //    return Result.Failure<TodoTask>(TaskErrors.Assignee.CouldNotChangeOwner);
-            //}
 
             //todo: more domain errors to validate
 
-            task.SetState(new AssignedState());
+            task.SetState(new EstimatedState());
 
             return Result.Success(task);
         }
 
-        public Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo)
-        {
-            return Result.Failure<TodoTask>(TaskErrors.Create.TaskIsAlreadyCreated);
-        }
-
-        public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation) => Result.Failure<TodoTask>(TaskErrors.Assignee.CanNotPerformActionNotAssignedTask);
+        public Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo) => Result.Failure<TodoTask>(TaskErrors.Create.TaskIsAlreadyCreated);
         public Result<TodoTask> AddDependencies(TodoTask task, TaskDependency dependency) => Result.Failure<TodoTask>(TaskErrors.Assignee.CanNotPerformActionNotAssignedTask);
         public Result<TodoTask> StartWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Assignee.CanNotPerformActionNotAssignedTask);
         public Result<TodoTask> CompleteWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Assignee.CanNotPerformActionNotAssignedTask);

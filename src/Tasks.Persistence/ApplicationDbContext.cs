@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Tasks.Application.Abstractions.Data;
+using Tasks.Domain.Person;
 using Tasks.Domain.Tasks;
 
 namespace Tasks.Persistence
@@ -7,6 +8,7 @@ namespace Tasks.Persistence
     public class ApplicationDbContext : DbContext, IApplicationDbContext, IUnitOfWork
     {
         public DbSet<TodoTask> Tasks { get; set; }
+        public DbSet<Person> Persons { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

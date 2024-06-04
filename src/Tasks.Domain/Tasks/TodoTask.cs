@@ -1,6 +1,5 @@
 ﻿using Tasks.Domain.Abstractions;
 using Tasks.Domain.Events.Tasks;
-using Tasks.Domain.Person;
 using Tasks.Domain.Shared;
 using Tasks.Domain.States;
 using Tasks.Domain.Tasks.TaskDetails;
@@ -13,10 +12,6 @@ namespace Tasks.Domain.Tasks
         public TaskId Id { get; }
 
         public TaskMainInfo MainInfo { get; private set; }
-
-        //public TaskAssignees? Assignees { get; private set; }
-        public PersonId OwnerId { get; set; }
-        public PersonId AssigneeId { get; set; }
 
         public TaskEstimation? Estimation { get; private set; }
 
@@ -91,20 +86,6 @@ namespace Tasks.Domain.Tasks
 
         #region Task Actions
 
-        public void Assign(TaskAssignees assignees)
-        {
-            var assignStateResult = State.Assign(this, assignees);
-
-            if (!assignStateResult.IsSuccess)
-            {
-                throw new DomainValidationException(assignStateResult.Error);
-            }
-
-            //Assignees = assignees;
-            OwnerId = assignees.OwnerId;
-            AssigneeId = assignees.AssigneeId;
-        }
-
         public void Estimate(TaskEstimation estimation)
         {
             var estimateStateResult = State.Estimate(this, estimation);
@@ -144,10 +125,11 @@ namespace Tasks.Domain.Tasks
                 throw new DomainValidationException(startWorkStateResult.Error);
             }
 
+            Stats ??= new TaskStatistic(Id);
             Stats.StartedDate = DateTime.UtcNow;
             Flags.IsStarted = true;
 
-            //todo: Raise(new WorkStartedDomainEvent(Guid.NewGuid(), Id);
+            Raise(new WorkStartedDomainEvent(Id.Value));
         }
 
         public void CompleteWork()
@@ -159,6 +141,7 @@ namespace Tasks.Domain.Tasks
                 throw new DomainValidationException(completeWorkStateResult.Error);
             }
 
+            Stats ??= new TaskStatistic(Id);
             Stats.CompletionDate = DateTime.UtcNow;
             Stats.ActualWorkDuration = new Duration(Stats.StartedDate, Stats.CompletionDate);
             Flags.IsCompleted = true;
@@ -173,6 +156,7 @@ namespace Tasks.Domain.Tasks
                 throw new DomainValidationException(verifyStateResult.Error);
             }
 
+            Stats ??= new TaskStatistic(Id);
             Stats.VerifiedDate = DateTime.UtcNow;
             Flags.IsVerified = true;
         }
@@ -185,7 +169,7 @@ namespace Tasks.Domain.Tasks
             {
                 throw new DomainValidationException(approveStateResult.Error);
             }
-
+            Stats ??= new TaskStatistic(Id);
             Stats.ApprovedDate = DateTime.UtcNow;
             Flags.IsApproved = true;
         }
@@ -199,6 +183,7 @@ namespace Tasks.Domain.Tasks
                 throw new DomainValidationException(releaseStateResult.Error);
             }
 
+            Stats ??= new TaskStatistic(Id);
             Stats.ReleasedDate = DateTime.UtcNow;
             Flags.IsReleased = true;
         }

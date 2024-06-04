@@ -30,12 +30,18 @@ namespace Tasks.Domain.States
                 return Result.Failure<TodoTask>(TaskErrors.Create.InvalidPriorityForHighRiskyCategory);
             }
 
+            if (task.MainInfo.OwnerId.Value != mainInfo.OwnerId.Value)
+            {
+                return Result.Failure<TodoTask>(TaskErrors.Assignee.CouldNotChangeOwner);
+            }
+
+            //todo: more domain errors to validate
+
             task.SetState(new CreatedState());
 
             return Result.Success(task);
         }
 
-        public Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
         public Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
         public Result<TodoTask> AddDependencies(TodoTask task, TaskDependency dependency) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);
         public Result<TodoTask> StartWork(TodoTask task) => Result.Failure<TodoTask>(TaskErrors.Create.CanNotPerformActionNotCreatedTask);

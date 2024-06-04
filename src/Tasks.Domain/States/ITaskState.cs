@@ -9,7 +9,6 @@ namespace Tasks.Domain.States
         string Title { get; }
         TodoTaskStatus Status { get; }
         Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo);
-        Result<TodoTask> Assign(TodoTask task, TaskAssignees assignees);
         Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation);
 
         #region v2

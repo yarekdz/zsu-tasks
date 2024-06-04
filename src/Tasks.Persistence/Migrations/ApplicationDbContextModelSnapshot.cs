@@ -37,18 +37,12 @@ namespace Tasks.Persistence.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Person");
+                    b.ToTable("Persons");
                 });
 
             modelBuilder.Entity("Tasks.Domain.Tasks.TodoTask", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AssigneeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Status")
@@ -58,27 +52,11 @@ namespace Tasks.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssigneeId");
-
-                    b.HasIndex("OwnerId");
-
                     b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("Tasks.Domain.Tasks.TodoTask", b =>
                 {
-                    b.HasOne("Tasks.Domain.Person.Person", null)
-                        .WithMany()
-                        .HasForeignKey("AssigneeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tasks.Domain.Person.Person", null)
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsOne("Tasks.Domain.Tasks.TaskDetails.TaskStatistic", "Stats", b1 =>
                         {
                             b1.Property<Guid>("TaskId")
@@ -134,6 +112,9 @@ namespace Tasks.Persistence.Migrations
                             b1.Property<Guid>("TodoTaskId")
                                 .HasColumnType("uuid");
 
+                            b1.Property<Guid>("AssigneeId")
+                                .HasColumnType("uuid");
+
                             b1.Property<string>("Category")
                                 .IsRequired()
                                 .HasMaxLength(50)
@@ -142,6 +123,9 @@ namespace Tasks.Persistence.Migrations
                             b1.Property<string>("Description")
                                 .HasMaxLength(500)
                                 .HasColumnType("character varying(500)");
+
+                            b1.Property<Guid>("OwnerId")
+                                .HasColumnType("uuid");
 
                             b1.Property<int>("Priority")
                                 .HasColumnType("integer");
@@ -153,7 +137,23 @@ namespace Tasks.Persistence.Migrations
 
                             b1.HasKey("TodoTaskId");
 
+                            b1.HasIndex("AssigneeId");
+
+                            b1.HasIndex("OwnerId");
+
                             b1.ToTable("Tasks");
+
+                            b1.HasOne("Tasks.Domain.Person.Person", null)
+                                .WithMany()
+                                .HasForeignKey("AssigneeId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+
+                            b1.HasOne("Tasks.Domain.Person.Person", null)
+                                .WithMany()
+                                .HasForeignKey("OwnerId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
 
                             b1.WithOwner()
                                 .HasForeignKey("TodoTaskId");
