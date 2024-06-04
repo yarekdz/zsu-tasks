@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasks.Application.Abstracti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasks.Domain.Events", "src\Tasks.Domain.Events\Tasks.Domain.Events.csproj", "{02E16328-62F5-4025-92F9-D61DCFCD2CD5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tasks.Persistence.Migrations", "src\Tasks.Persistence.Migrations\Tasks.Persistence.Migrations.csproj", "{065E260B-B646-47F9-A8A8-EB2CF8362AF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{02E16328-62F5-4025-92F9-D61DCFCD2CD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02E16328-62F5-4025-92F9-D61DCFCD2CD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02E16328-62F5-4025-92F9-D61DCFCD2CD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{065E260B-B646-47F9-A8A8-EB2CF8362AF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{065E260B-B646-47F9-A8A8-EB2CF8362AF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{065E260B-B646-47F9-A8A8-EB2CF8362AF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{065E260B-B646-47F9-A8A8-EB2CF8362AF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +88,7 @@ Global
 		{2C0AE0B0-8641-4645-A019-E3AE18AF2C8D} = {D4E9EE92-617C-4E80-82FC-E20D026F8B88}
 		{6EE63023-9CBB-4EFC-9616-89F8021AFFE1} = {9B758734-9B6C-48BB-9783-DF898E9EFD9E}
 		{02E16328-62F5-4025-92F9-D61DCFCD2CD5} = {CBF3C365-846E-40A3-9F2A-ED4726CDF6AA}
+		{065E260B-B646-47F9-A8A8-EB2CF8362AF7} = {D4E9EE92-617C-4E80-82FC-E20D026F8B88}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5BD53184-BF13-4337-835F-91DFBA06D673}

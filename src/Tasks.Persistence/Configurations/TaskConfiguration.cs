@@ -22,33 +22,41 @@ namespace Tasks.Persistence.Configurations
             builder.OwnsOne(t => t.MainInfo, mainInfoBuilder =>
             {
                 mainInfoBuilder.Property(mi => mi.Title).IsRequired().HasMaxLength(100);
+
                 mainInfoBuilder.Property(mi => mi.Description).HasMaxLength(500);
-                mainInfoBuilder.Property(mi => mi.Category).IsRequired().HasConversion(
-                    c => c.ToString(),
+
+                mainInfoBuilder.Property(mi => mi.Category).IsRequired().HasMaxLength(50)
+                    .HasConversion(c => c.ToString(),
                     c => (Category)Enum.Parse(typeof(Category), c));
-                mainInfoBuilder.Property(mi => mi.Priority).IsRequired().HasConversion(
-                    pr => pr.Value,
+
+                mainInfoBuilder.Property(mi => mi.Priority).IsRequired()
+                    .HasConversion(pr => pr.Value,
                     pr => Priority.Create(pr));
             });
 
-            builder.OwnsOne(t => t.Assignees, assigneeBuilder =>
-            {
-                assigneeBuilder.WithOwner().HasForeignKey(assignees => assignees.AssigneeId);
-                assigneeBuilder.WithOwner().HasForeignKey(assignees => assignees.OwnerId);
+            builder.HasOne<Person>()
+                .WithMany()
+                .HasForeignKey(t => t.OwnerId)
+                .IsRequired();
 
-                assigneeBuilder.Property(a => a.OwnerId).HasConversion(
-                    ownerId => ownerId.Value,
-                    ownerId => new PersonId(ownerId));
+            builder.Property(a => a.OwnerId).HasConversion(
+                ownerId => ownerId.Value,
+                ownerId => new PersonId(ownerId));
 
-                assigneeBuilder.Property(a => a.AssigneeId).HasConversion(
-                    assigneeId => assigneeId.Value,
-                    assigneeId => new PersonId(assigneeId));
-            });
+            builder.HasOne<Person>()
+                .WithMany()
+                .HasForeignKey(t => t.AssigneeId)
+                .IsRequired();
+
+            builder.Property(a => a.AssigneeId).HasConversion(
+                assigneeId => assigneeId.Value,
+                assigneeId => new PersonId(assigneeId));
 
             builder.OwnsOne(t => t.Estimation, estimationBuilder =>
             {
                 estimationBuilder.Property(est => est.EstimatedStartDateTime).IsRequired();
                 estimationBuilder.Property(est => est.EstimatedEndDateTime).IsRequired();
+                estimationBuilder.Ignore(est => est.EstimatedWorkDuration);
             });
 
             builder.OwnsOne(t => t.Stats, statsBuilder =>
@@ -64,14 +72,11 @@ namespace Tasks.Persistence.Configurations
             });
 
             builder.Ignore(t => t.Flags);
+            builder.Ignore(t => t.State);
 
-            builder.OwnsOne(t => t.State, statsBuilder =>
-            {
-                statsBuilder.Property(s => s.Title).HasMaxLength(50);
-                statsBuilder.Property(s => s.Status).HasConversion(
-                    status => status.ToString(),
-                    status => (TodoTaskStatus)Enum.Parse(typeof(TodoTaskStatus), status));
-            });
+            builder.Property(t => t.Status).HasMaxLength(50)
+                .HasConversion(status => status.ToString(),
+                status => (TodoTaskStatus)Enum.Parse(typeof(TodoTaskStatus), status));
         }
     }
 }

@@ -22,11 +22,12 @@ namespace Tasks.Domain.States
                 return Result.Failure<TodoTask>(TaskErrors.Assignee.InvalidOwner);
             }
 
-            if (task.Assignees?.Owner != null &&
-                !string.Equals(task.Assignees?.Owner?.Email, assignees.Owner.Email))
-            {
-                return Result.Failure<TodoTask>(TaskErrors.Assignee.CouldNotChangeOwner);
-            }
+            //todo
+            //if (task.OwnerId != null &&
+            //    !string.Equals(task.OwnerId, assignees.Owner.Email))
+            //{
+            //    return Result.Failure<TodoTask>(TaskErrors.Assignee.CouldNotChangeOwner);
+            //}
 
             //todo: more domain errors to validate
 

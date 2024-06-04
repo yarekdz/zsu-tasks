@@ -18,7 +18,9 @@ namespace Tasks.Persistence
             services
                 .AddEntityFrameworkNpgsql()
                 .AddDbContext<ApplicationDbContext>(options =>
-                    options.UseNpgsql(configuration.GetConnectionString("Database")));
+                    options.UseNpgsql(configuration.GetConnectionString("Database")
+                        //,x => x.MigrationsAssembly()
+                        ));
 
             services.AddScoped<IApplicationDbContext>(sp =>
                 sp.GetRequiredService<ApplicationDbContext>());

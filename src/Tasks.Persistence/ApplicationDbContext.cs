@@ -10,8 +10,8 @@ namespace Tasks.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseNpgsql(opt => opt.)
-            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseNpgsql();
+            //base.OnConfiguring(optionsBuilder);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

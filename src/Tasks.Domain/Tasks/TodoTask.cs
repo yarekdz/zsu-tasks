@@ -1,5 +1,6 @@
 ﻿using Tasks.Domain.Abstractions;
 using Tasks.Domain.Events.Tasks;
+using Tasks.Domain.Person;
 using Tasks.Domain.Shared;
 using Tasks.Domain.States;
 using Tasks.Domain.Tasks.TaskDetails;
@@ -13,7 +14,9 @@ namespace Tasks.Domain.Tasks
 
         public TaskMainInfo MainInfo { get; private set; }
 
-        public TaskAssignees? Assignees { get; private set; }
+        //public TaskAssignees? Assignees { get; private set; }
+        public PersonId OwnerId { get; set; }
+        public PersonId AssigneeId { get; set; }
 
         public TaskEstimation? Estimation { get; private set; }
 
@@ -39,6 +42,13 @@ namespace Tasks.Domain.Tasks
         #endregion
 
         public ITaskState State { get; private set; }
+        public TodoTaskStatus Status
+        {
+            get => State.Status;
+            private set{}
+        }
+
+        private TodoTask(){}
 
         protected TodoTask(Guid id, TaskMainInfo mainInfo)
         {
@@ -90,7 +100,9 @@ namespace Tasks.Domain.Tasks
                 throw new DomainValidationException(assignStateResult.Error);
             }
 
-            Assignees = assignees;
+            //Assignees = assignees;
+            OwnerId = assignees.OwnerId;
+            AssigneeId = assignees.AssigneeId;
         }
 
         public void Estimate(TaskEstimation estimation)
