@@ -10,6 +10,11 @@ namespace Tasks.Persistence
         public DbSet<TodoTask> Tasks { get; set; }
         public DbSet<Person> Persons { get; set; }
 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+            
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql();

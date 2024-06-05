@@ -52,16 +52,6 @@ namespace Tasks.Persistence.Configurations
                     .IsRequired();
             });
 
-            //builder.HasOne<Person>()
-            //    .WithMany()
-            //    .HasForeignKey("MainInfo_OwnerId")
-            //    .IsRequired();
-
-            //builder.HasOne<Person>()
-            //    .WithMany()
-            //    .HasForeignKey("MainInfo_AssigneeId")
-            //    .IsRequired();
-
             builder.OwnsOne(t => t.Estimation, estimationBuilder =>
             {
                 estimationBuilder.Property(est => est.EstimatedStartDateTime).IsRequired();
