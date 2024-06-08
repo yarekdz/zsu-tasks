@@ -14,7 +14,7 @@ services:
         - "5000:5000"
         - "5001:5001"
     networks:
-      - tasks-network
+        - tasks-network
 
   tasks.database:
     image: postgres:latest
@@ -28,6 +28,15 @@ services:
     ports:
         - 5432:5432  
     networks:
-      - tasks-network
-      
+        - tasks-network
+ 
+  tasks.cache:
+    image: redis:latest
+    restart: always
+    ports:
+        - "6379:6379"
+    networks:
+        - tasks-network
+
+
     

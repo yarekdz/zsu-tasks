@@ -16,17 +16,19 @@ namespace Tasks.Persistence.Repositories.Queries
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<TodoTask>> GetAll()
+        public async Task<IEnumerable<TodoTask>> GetAll(CancellationToken ct)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<TodoTask?> Get(Guid id)
+        public async Task<TodoTask?> Get(Guid id, CancellationToken ct)
         {
-            return await _dbContext.Tasks.SingleAsync(t => t.Id == new TaskId(id));
+            return await _dbContext.Tasks
+                .AsNoTracking()
+                .SingleOrDefaultAsync(t => t.Id == new TaskId(id), ct);
         }
 
-        public async Task<TaskSummary?> GetMainInfoByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<TaskSummary?> GetMainInfoByIdAsync(Guid id, CancellationToken ct)
         {
             return await _dbContext
                 .Database
@@ -38,7 +40,7 @@ namespace Tasks.Persistence.Repositories.Queries
                         t.Category as Category
                     FROM Tasks AS t
                     WHERE t.Id = {id}")
-                .SingleOrDefaultAsync(cancellationToken);
+                .SingleOrDefaultAsync(ct);
         }
     }
 }

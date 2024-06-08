@@ -5,6 +5,6 @@ namespace Tasks.Domain.Abstractions.Repositories.Queries
 {
     public interface ITaskQueriesRepository : IQueriesRepository<TodoTask>
     {
-        Task<TaskSummary?> GetMainInfoByIdAsync(Guid id, CancellationToken cancellationToken);
+        Task<TaskSummary?> GetMainInfoByIdAsync(Guid id, CancellationToken ct);
     }
 }

@@ -21,11 +21,18 @@ namespace Tasks.Persistence.Repositories.Commands
         public Task DeleteAsync(string id, bool ignoreDependencies = false)
         {
             throw new NotImplementedException();
+            //todo: on UPDATE, cache.Remove($"tasks-{id}"(
+
         }
 
         public Task DeleteAsync(string[] ids, bool ignoreDependencies = false)
+
         {
             throw new NotImplementedException();
+            //todo: on UPDATE, cache.Remove($"tasks-{id}"(
+
         }
+
+        //todo: on UPDATE, cache.Remove($"tasks-{id}"(
     }
 }

@@ -29,6 +29,9 @@ namespace Tasks.Api
                 .AddPersistence(builder.Configuration)
                 .AddPresentation();
 
+            builder.Services.AddStackExchangeRedisCache(options =>
+                options.Configuration = builder.Configuration.GetConnectionString("Cache"));
+
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 
