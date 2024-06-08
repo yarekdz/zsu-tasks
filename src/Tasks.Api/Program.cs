@@ -73,8 +73,8 @@ namespace Tasks.Api
                         options.SwaggerEndpoint(url, name);
                     }
                 });
-                
-                //app.ApplyMigrations();
+
+                app.ApplyMigrations();
             }
 
             //app.MapHealthChecks("health", new HealthCheckOptions
