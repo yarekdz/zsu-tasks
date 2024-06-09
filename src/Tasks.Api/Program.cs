@@ -80,10 +80,11 @@ namespace Tasks.Api
                 app.ApplyMigrations();
             }
 
-            //app.MapHealthChecks("health", new HealthCheckOptions
+            app.MapHealthChecks("health");
+            //    , new HealthCheckOptions
             //{
             //    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            //});
+            //}
 
             app.UseRequestContextLogging();
 

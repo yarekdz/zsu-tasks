@@ -1,5 +1,7 @@
-﻿//namespace Tasks.Persistence.Options;
+﻿namespace Tasks.Persistence.Options;
 
-//internal class ConnectionStringOptions
-//{
-//}
+internal sealed class ConnectionStringOptions
+{
+    public const string Position = "ConnectionStrings";
+    public string Database { get; set; }
+}
