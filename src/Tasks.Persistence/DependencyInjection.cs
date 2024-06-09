@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Tasks.Application.Abstractions.Data;
 using Tasks.Domain.Abstractions.Repositories.Commands;
 using Tasks.Domain.Abstractions.Repositories.Queries;
 using Tasks.Persistence.Data;
-using Tasks.Persistence.Health;
 using Tasks.Persistence.Options;
 using Tasks.Persistence.Repositories.Commands;
 using Tasks.Persistence.Repositories.Queries;
