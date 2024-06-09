@@ -22,12 +22,14 @@ namespace Tasks.Persistence
             services.AddOptions<ConnectionStringOptions>()
                 .Bind(configuration.GetSection(ConnectionStringOptions.Position));
 
+            var npgSqlConnectionString = configuration.GetConnectionString("Database");
+
             services.AddScoped<NpgSqlDbConnectionFactory, NpgSqlDbConnectionFactory>();
 
             services
                 .AddEntityFrameworkNpgsql()
                 .AddDbContext<ApplicationDbContext>(options =>
-                    options.UseNpgsql(configuration.GetConnectionString("Database")
+                    options.UseNpgsql(npgSqlConnectionString
                         //,x => x.MigrationsAssembly()
                         ));
 
@@ -41,7 +43,8 @@ namespace Tasks.Persistence
             services.AddScoped<ITaskQueriesRepository, TaskQueriesRepository>();
 
             services.AddHealthChecks()
-                .AddCheck<DatabaseHealthCheck>("npg-sql", HealthStatus.Unhealthy);
+                .AddNpgSql(npgSqlConnectionString)
+                .AddDbContextCheck<ApplicationDbContext>();
 
             return services;
         }

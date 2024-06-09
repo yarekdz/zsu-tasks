@@ -2,6 +2,7 @@
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Asp.Versioning.Builder;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using Tasks.Api.Extensions;
@@ -45,6 +46,9 @@ namespace Tasks.Api
                 options.SubstituteApiVersionInUrl = true;
             });
 
+            builder.Services.AddHealthChecks()
+                .AddRedis(builder.Configuration.GetConnectionString("Cache"));
+
             builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 
             builder.Host.UseSerilog((context, configuration) =>
@@ -80,11 +84,10 @@ namespace Tasks.Api
                 app.ApplyMigrations();
             }
 
-            app.MapHealthChecks("health");
-            //    , new HealthCheckOptions
-            //{
-            //    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            //}
+            app.MapHealthChecks("health", new HealthCheckOptions
+                {
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
 
             app.UseRequestContextLogging();
 
