@@ -11,5 +11,5 @@ namespace Tasks.Application.Tasks.Create
         Category Category, 
         Priority Priority,
         PersonId OwnerId,
-        PersonId AssigneeId) : ICommand;
+        PersonId AssigneeId) : ICommand<Guid>;
 }

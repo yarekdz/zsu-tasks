@@ -6,7 +6,7 @@ using Tasks.Domain.Tasks.TaskDetails;
 
 namespace Tasks.Application.Tasks.Create
 {
-    internal class CreateTaskCommandHandler : ICommandHandler<CreateTaskCommand>
+    internal class CreateTaskCommandHandler : ICommandHandler<CreateTaskCommand, Guid>
     {
         private readonly ITaskCommandsRepository _taskCommandsRepository;
 
@@ -17,7 +17,7 @@ namespace Tasks.Application.Tasks.Create
         }
 
 
-        public async Task<Result> Handle(CreateTaskCommand command, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(CreateTaskCommand command, CancellationToken cancellationToken)
         {
             var todoTask = TodoTask.Create(
                 new TaskMainInfo(
@@ -32,7 +32,7 @@ namespace Tasks.Application.Tasks.Create
 
             await _taskCommandsRepository.CreateAsync(todoTask, cancellationToken);
 
-            return Result.Success();
+            return todoTask.Id;
         }
     }
 }

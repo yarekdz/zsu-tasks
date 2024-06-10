@@ -19,9 +19,9 @@ namespace Tasks.Application.Tasks.GetTask
 
             if (taskSummary is null)
             {
-                return Result.Failure<GetTaskResponse>(new Error(
-                    "GetTask.NotFound",
-                    $"Task with specified id {request.TaskId.ToString()} was not found"));
+                return Result.Failure<GetTaskResponse>(Error.NotFound(
+                    (string)"GetTask.NotFound",
+                    (string)$"Task with specified id {request.TaskId.ToString()} was not found"));
             }
 
             return Result.Success(new GetTaskResponse(

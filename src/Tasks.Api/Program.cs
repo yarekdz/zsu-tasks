@@ -95,6 +95,8 @@ namespace Tasks.Api
 
             app.UseHttpsRedirection();
 
+            app.UseExceptionHandler();
+
             //todo
             //app.UseAuthorization();
 
