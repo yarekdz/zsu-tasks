@@ -1,8 +1,9 @@
-﻿using Tasks.Domain.ValueObjects;
+﻿using Tasks.Domain.Abstractions;
+using Tasks.Domain.ValueObjects;
 
 namespace Tasks.Domain.Tasks.TaskDetails
 {
-    public class TaskStatistic
+    public class TaskStatistic : Entity
     {
         public TaskStatistic(TaskId taskId)
         {
@@ -10,6 +11,7 @@ namespace Tasks.Domain.Tasks.TaskDetails
         }
 
         public TaskId TaskId { get; }
+        public TodoTask Task { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? StartedDate { get; set; }
         public DateTime? CompletionDate { get; set; }

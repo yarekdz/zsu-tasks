@@ -10,9 +10,10 @@ namespace Tasks.Persistence.Configurations
         {
             builder.HasKey(p => p.Id);
 
-            builder.Property(t => t.PersonId).HasConversion(
-                personId => personId.Value,
-                value => new PersonId(value));
+            builder.Property(t => t.PersonId)
+                .HasColumnName(nameof(Person.PersonId))
+                .HasConversion(personId => personId.Value,
+                    value => new PersonId(value));
 
             builder.Property(p => p.Email).HasMaxLength(255).IsRequired();
 

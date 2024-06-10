@@ -16,9 +16,10 @@ namespace Tasks.Persistence.Configurations
             builder.HasKey(t => t.Id);
             builder.HasIndex(t => t.TaskId).IsUnique();
 
-            builder.Property(t => t.TaskId).HasConversion(
-                taskId => taskId.Value,
-                value => new TaskId(value));
+            builder.Property(t => t.TaskId)
+                .HasColumnName(nameof(TodoTask.TaskId))
+                .HasConversion(taskId => taskId.Value,
+                    value => new TaskId(value));
 
             builder.OwnsOne(t => t.MainInfo, mib =>
             {
@@ -45,11 +46,13 @@ namespace Tasks.Persistence.Configurations
                 mib.HasOne<Person>()
                     .WithMany()
                     .HasForeignKey(mi => mi.OwnerId)
+                    .HasPrincipalKey(m => m.PersonId)
                     .IsRequired();
 
                 mib.HasOne<Person>()
                     .WithMany()
                     .HasForeignKey(mi => mi.AssigneeId)
+                    .HasPrincipalKey(m => m.PersonId)
                     .IsRequired();
             });
 
@@ -60,17 +63,11 @@ namespace Tasks.Persistence.Configurations
                 estimationBuilder.Ignore(est => est.EstimatedWorkDuration);
             });
 
-            builder.OwnsOne(t => t.Stats, statsBuilder =>
-            {
-                statsBuilder.WithOwner().HasForeignKey(statistic => statistic.TaskId);
-
-                statsBuilder.Property(s => s.TaskId).HasConversion(
-                    taskId => taskId.Value,
-                    taskId => new TaskId(taskId));
-
-                statsBuilder.Property(s => s.CreatedDate).IsRequired();
-                statsBuilder.Ignore(s => s.ActualWorkDuration);
-            });
+            builder
+                .HasOne(t => t.Stats)
+                .WithOne(ts => ts.Task)
+                .HasForeignKey<TaskStatistic>(ts => ts.TaskId)
+                .HasPrincipalKey<TodoTask>(t => t.TaskId);
 
             builder.Ignore(t => t.Flags);
             builder.Ignore(t => t.State);
