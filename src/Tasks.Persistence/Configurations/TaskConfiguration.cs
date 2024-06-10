@@ -14,8 +14,9 @@ namespace Tasks.Persistence.Configurations
         public void Configure(EntityTypeBuilder<TodoTask> builder)
         {
             builder.HasKey(t => t.Id);
+            builder.HasIndex(t => t.TaskId).IsUnique();
 
-            builder.Property(t => t.Id).HasConversion(
+            builder.Property(t => t.TaskId).HasConversion(
                 taskId => taskId.Value,
                 value => new TaskId(value));
 

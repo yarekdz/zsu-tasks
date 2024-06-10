@@ -25,7 +25,7 @@ namespace Tasks.Persistence.Repositories.Queries
         {
             return await _dbContext.Tasks
                 .AsNoTracking()
-                .SingleOrDefaultAsync(t => t.Id == new TaskId(id), ct);
+                .SingleOrDefaultAsync(t => t.TaskId == new TaskId(id), ct);
         }
 
         public async Task<TaskSummary?> GetMainInfoByIdAsync(Guid id, CancellationToken ct)

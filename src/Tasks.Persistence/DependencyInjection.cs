@@ -18,7 +18,8 @@ namespace Tasks.Persistence
             IConfiguration configuration)
         {
             services.AddOptions<ConnectionStringOptions>()
-                .Bind(configuration.GetSection(ConnectionStringOptions.Position));
+                .Bind(configuration.GetSection(ConnectionStringOptions.Position))
+                .ValidateOnStart();
 
             var npgSqlConnectionString = configuration.GetConnectionString("Database");
 

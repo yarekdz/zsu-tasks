@@ -1,9 +1,12 @@
-﻿namespace Tasks.Domain.Abstractions.Repositories.Commands;
+﻿using Tasks.Domain.Abstractions.Dtos;
 
-public interface ICommandsRepository<in TDomainEntity>
+namespace Tasks.Domain.Abstractions.Repositories.Commands;
+
+public interface ICommandsRepository<TDomainEntity>
+    where TDomainEntity : Entity
 {
-    Task CreateAsync(TDomainEntity domainModel);
-    //Task<UpdateResponse<TDomainEntity>> UpdateAsync(TDomainEntity domainModel);
-    Task DeleteAsync(string id, bool ignoreDependencies = false);
-    Task DeleteAsync(string[] ids, bool ignoreDependencies = false);
+    Task CreateAsync(TDomainEntity domainModel, CancellationToken ct);
+    Task<UpdateResponse<TDomainEntity>> UpdateAsync(TDomainEntity domainModel, CancellationToken ct);
+    Task DeleteAsync(Guid id, CancellationToken ct, bool ignoreDependencies = false);
+    Task DeleteAsync(Guid[] ids, CancellationToken ct, bool ignoreDependencies = false);
 }

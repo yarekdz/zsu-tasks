@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Tasks.Application.Abstractions.Data;
 
 namespace Tasks.Application
 {
@@ -7,8 +8,11 @@ namespace Tasks.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddMediatR(configuration =>
-                configuration.RegisterServicesFromAssembly(
-                    typeof(DependencyInjection).Assembly));
+            {
+                configuration.RegisterServicesFromAssemblyContaining<AssemblyReference>();
+
+                configuration.AddOpenBehavior(typeof(UnitOfWorkBehaviour<,>));
+            });
 
             return services;
         }

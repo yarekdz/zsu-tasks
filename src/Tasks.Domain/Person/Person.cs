@@ -6,13 +6,16 @@ namespace Tasks.Domain.Person
 {
     public class Person : Entity
     {
-        protected Person(PersonId id, string email)
+        protected Person(Guid id, string email)
         {
             Id = id;
+            CreatedAt = DateTime.UtcNow;
+
+            PersonId = new PersonId(id);
             Email = email;
         }
 
-        public PersonId Id { get; set; }
+        public PersonId PersonId { get; set; }
         public string Email { get; set; } //todo: regexp
 
         public static Person Create(string email)
@@ -22,9 +25,9 @@ namespace Tasks.Domain.Person
                 throw new DomainValidationException(Errors.PersonErrors.Create.InvalidEmail);
             }
 
-            var newPerson = new Person(new PersonId(Guid.NewGuid()), email);
+            var newPerson = new Person(Guid.NewGuid(), email);
 
-            newPerson.Raise(new PersonCreatedDomainEvent(newPerson.Id.Value));
+            newPerson.Raise(new PersonCreatedDomainEvent(newPerson.PersonId.Value));
             return newPerson;
         }
 

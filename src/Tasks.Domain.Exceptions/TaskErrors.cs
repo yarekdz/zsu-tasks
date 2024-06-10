@@ -4,6 +4,9 @@ namespace Tasks.Domain.Errors
 {
     public static class TaskErrors
     {
+        public static Error TaskNotFound = new("TaskErrors.TaskNotFound",
+            "Task not found");
+
         public static class Create
         {
             public static readonly Error NullTask = new("CreateTask.NullTask",

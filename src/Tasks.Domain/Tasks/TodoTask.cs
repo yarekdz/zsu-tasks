@@ -9,7 +9,7 @@ namespace Tasks.Domain.Tasks
 {
     public class TodoTask : Entity
     {
-        public TaskId Id { get; }
+        public TaskId TaskId { get; }
 
         public TaskMainInfo MainInfo { get; private set; }
 
@@ -47,12 +47,15 @@ namespace Tasks.Domain.Tasks
 
         protected TodoTask(Guid id, TaskMainInfo mainInfo)
         {
-            Id = new TaskId(id);
+            Id = id;
+            CreatedAt = DateTime.UtcNow;
+            
+            TaskId = new TaskId(id);
             MainInfo = mainInfo;
 
             State = new ConceptInactiveState();
 
-            Stats = new TaskStatistic(Id)
+            Stats = new TaskStatistic(TaskId)
             {
                 CreatedDate = DateTime.UtcNow,
             };
@@ -74,7 +77,7 @@ namespace Tasks.Domain.Tasks
 
             newTask.MainInfo = mainInfo;
 
-            newTask.Raise(new TaskCreatedDomainEvent(newTask.Id.Value));
+            newTask.Raise(new TaskCreatedDomainEvent(newTask.TaskId.Value));
 
             return newTask;
         }
@@ -125,11 +128,11 @@ namespace Tasks.Domain.Tasks
                 throw new DomainValidationException(startWorkStateResult.Error);
             }
 
-            Stats ??= new TaskStatistic(Id);
+            Stats ??= new TaskStatistic(TaskId);
             Stats.StartedDate = DateTime.UtcNow;
             Flags.IsStarted = true;
 
-            Raise(new WorkStartedDomainEvent(Id.Value));
+            Raise(new WorkStartedDomainEvent(TaskId.Value));
         }
 
         public void CompleteWork()
@@ -141,7 +144,7 @@ namespace Tasks.Domain.Tasks
                 throw new DomainValidationException(completeWorkStateResult.Error);
             }
 
-            Stats ??= new TaskStatistic(Id);
+            Stats ??= new TaskStatistic(TaskId);
             Stats.CompletionDate = DateTime.UtcNow;
             Stats.ActualWorkDuration = new Duration(Stats.StartedDate, Stats.CompletionDate);
             Flags.IsCompleted = true;
@@ -156,7 +159,7 @@ namespace Tasks.Domain.Tasks
                 throw new DomainValidationException(verifyStateResult.Error);
             }
 
-            Stats ??= new TaskStatistic(Id);
+            Stats ??= new TaskStatistic(TaskId);
             Stats.VerifiedDate = DateTime.UtcNow;
             Flags.IsVerified = true;
         }
@@ -169,7 +172,7 @@ namespace Tasks.Domain.Tasks
             {
                 throw new DomainValidationException(approveStateResult.Error);
             }
-            Stats ??= new TaskStatistic(Id);
+            Stats ??= new TaskStatistic(TaskId);
             Stats.ApprovedDate = DateTime.UtcNow;
             Flags.IsApproved = true;
         }
@@ -183,7 +186,7 @@ namespace Tasks.Domain.Tasks
                 throw new DomainValidationException(releaseStateResult.Error);
             }
 
-            Stats ??= new TaskStatistic(Id);
+            Stats ??= new TaskStatistic(TaskId);
             Stats.ReleasedDate = DateTime.UtcNow;
             Flags.IsReleased = true;
         }
@@ -205,7 +208,7 @@ namespace Tasks.Domain.Tasks
         public override string ToString()
         {
             return
-                $"TaskId: {Id.Value.ToString()} | Title: {MainInfo.Title} | Created: {Stats?.CreatedDate:yyyy-MM-dd} | Status: {State.Status} | " +
+                $"TaskId: {TaskId.Value.ToString()} | Title: {MainInfo.Title} | Created: {Stats?.CreatedDate:yyyy-MM-dd} | Status: {State.Status} | " +
                 $"Estimation: {Estimation?.EstimatedWorkDuration} | " +
                (Stats is { StartedDate: { } } ? $"Stats: WorkStarted: {Stats?.StartedDate.Value:yyyy-MM-dd HH:mm} | ": "") +
                (Stats is { CompletionDate: { } } ? $"WorkCompleted: {Stats?.CompletionDate.Value:yyyy-MM-dd HH:mm} | " : "") +
