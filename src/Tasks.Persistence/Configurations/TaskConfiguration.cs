@@ -29,7 +29,7 @@ namespace Tasks.Persistence.Configurations
 
                 mib.Property(mi => mi.Category).IsRequired().HasMaxLength(50)
                     .HasConversion(c => c.ToString(),
-                        c => (Category)Enum.Parse(typeof(Category), c));
+                        c => TaskCategory.FromName(c));
 
                 mib.Property(mi => mi.Priority).IsRequired()
                     .HasConversion(pr => pr.Value,

@@ -2,7 +2,6 @@
 {
     public interface IQueriesRepository<TDomainEntity>
     {
-        Task<IEnumerable<TDomainEntity>> GetAll(CancellationToken ct);
-        Task<TDomainEntity?> Get(Guid id, CancellationToken ct);
+        Task<TDomainEntity?> GetAsync(Guid id, CancellationToken ct);
     }
 }

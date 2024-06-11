@@ -1,3 +1,11 @@
-﻿namespace Tasks.Application.Tasks.GetTask;
+﻿using Tasks.Domain;
+using Tasks.Domain.Tasks.TaskDetails;
 
-public record GetTaskResponse(Guid Id, string Title, string Description, string Category);
+namespace Tasks.Application.Tasks.GetTask;
+
+public record GetTaskResponse(
+    Guid Id, 
+    TaskId TaskId, 
+    string Title, 
+    string Description, 
+    TaskCategory Category);

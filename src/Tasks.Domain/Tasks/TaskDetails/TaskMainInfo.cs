@@ -16,7 +16,7 @@ namespace Tasks.Domain.Tasks.TaskDetails
 
         public string? Description { get; set; }
 
-        public Category Category { get; set; } = Category.Default;
+        public TaskCategory Category { get; set; } = TaskCategory.Default;
 
         public Priority Priority { get; set; } = Priority.Create();
 

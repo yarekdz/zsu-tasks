@@ -2,6 +2,7 @@
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Asp.Versioning.Builder;
+using Carter;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
@@ -50,6 +51,8 @@ namespace Tasks.Api
                 .AddRedis(builder.Configuration.GetConnectionString("Cache"));
 
             builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
+
+            builder.Services.AddCarter();
 
             builder.Host.UseSerilog((context, configuration) =>
                 configuration.ReadFrom.Configuration(context.Configuration));
@@ -101,6 +104,8 @@ namespace Tasks.Api
             //app.UseAuthorization();
 
             app.MapControllers();
+
+            app.MapCarter();
 
             app.Run();
         }

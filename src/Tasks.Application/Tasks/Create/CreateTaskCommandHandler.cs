@@ -16,7 +16,6 @@ namespace Tasks.Application.Tasks.Create
             _taskCommandsRepository = taskCommandsRepository;
         }
 
-
         public async Task<Result<Guid>> Handle(CreateTaskCommand command, CancellationToken cancellationToken)
         {
             var todoTask = TodoTask.Create(

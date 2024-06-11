@@ -21,7 +21,7 @@ namespace Tasks.Application.Tasks.Update
 
         public async Task<Result> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
         {
-            var task = await _taskQueriesRepository.Get(request.TaskId.Value, cancellationToken);
+            var task = await _taskQueriesRepository.GetAsync(request.TaskId.Value, cancellationToken);
 
             if (task == null)
             {

@@ -24,7 +24,7 @@ namespace Tasks.Domain.States
             }
 
             //HighRisky category tasks should have  5 highest Priority
-            if (mainInfo.Category is Category.HighRisky
+            if (mainInfo.Category == TaskCategory.HighRisky
                 && mainInfo.Priority != Priority.HightestPriority)
             {
                 return Result.Failure<TodoTask>(TaskErrors.Create.InvalidPriorityForHighRiskyCategory);

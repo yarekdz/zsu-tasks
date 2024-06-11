@@ -1,6 +1,8 @@
 ﻿using Tasks.Application.Abstractions.Messaging;
+using Tasks.Domain;
 using Tasks.Domain.Abstractions.Repositories.Queries;
 using Tasks.Domain.Shared;
+using Tasks.Domain.Tasks.TaskDetails;
 
 namespace Tasks.Application.Tasks.GetTask
 {
@@ -15,20 +17,21 @@ namespace Tasks.Application.Tasks.GetTask
 
         public async Task<Result<GetTaskResponse>> Handle(GetTaskQuery request, CancellationToken cancellationToken)
         {
-            var taskSummary = await _taskQueriesRepository.GetMainInfoByIdAsync(request.TaskId, cancellationToken);
+            var taskSummary = await _taskQueriesRepository.GetMainInfoByIdAsync(request.TaskId.Value, cancellationToken);
 
             if (taskSummary is null)
             {
                 return Result.Failure<GetTaskResponse>(Error.NotFound(
-                    (string)"GetTask.NotFound",
-                    (string)$"Task with specified id {request.TaskId.ToString()} was not found"));
+                    "GetTask.NotFound",
+                    $"Task with specified id {request.TaskId} was not found"));
             }
 
             return Result.Success(new GetTaskResponse(
-                taskSummary.TaskId,
+                taskSummary.Id,
+                new TaskId(taskSummary.TaskId),
                 taskSummary.Title,
                 taskSummary.Description,
-                taskSummary.Category));
+                TaskCategory.FromName(taskSummary.Category)));
         }
     }
 }

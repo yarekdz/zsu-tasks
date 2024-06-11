@@ -8,7 +8,7 @@ namespace Tasks.Application.Tasks.Create
     public record CreateTaskCommand(
         string Title, 
         string Description, 
-        Category Category, 
+        TaskCategory Category, 
         Priority Priority,
         PersonId OwnerId,
         PersonId AssigneeId) : ICommand<Guid>;
