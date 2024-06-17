@@ -12,7 +12,7 @@ namespace Tasks.Domain.Tasks.TaskDetails
             AssigneeId = assigneeId;
         }
 
-        public string Title { get; set; }
+        public string Title { get; set; } //todo use Title domain type with validation
 
         public string? Description { get; set; }
 

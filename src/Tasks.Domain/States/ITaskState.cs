@@ -7,7 +7,7 @@ namespace Tasks.Domain.States
     public interface ITaskState
     {
         string Title { get; }
-        TodoTaskStatus Status { get; }
+        //TodoTaskStatus Status { get; }
         Result<TodoTask> Create(TodoTask task, TaskMainInfo mainInfo);
         Result<TodoTask> Estimate(TodoTask task, TaskEstimation estimation);
 

@@ -1,10 +1,11 @@
 ﻿using Tasks.Application.Abstractions.Messaging;
-using Tasks.Domain;
 using Tasks.Domain.Abstractions.Repositories.Queries;
 using Tasks.Domain.Shared;
+using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
+using Tasks.Domain.ValueObjects;
 
-namespace Tasks.Application.Tasks.GetCompleteTasks
+namespace Tasks.Application.Tasks.GetReleasedTasks
 {
     internal sealed class
         GetReleasedTasksQueryHandler : IQueryHandler<GetReleasedTasksQuery, IEnumerable<GetReleasedTasksQueryResponse>>
@@ -28,7 +29,8 @@ namespace Tasks.Application.Tasks.GetCompleteTasks
                     new TaskId(t.TaskId),
                     t.Title,
                     t.Description,
-                    TaskCategory.FromName(t.Category))));
+                    TaskCategory.Create(t.Category),
+                    Priority.Create(t.Priority))));
         }
     }
 }

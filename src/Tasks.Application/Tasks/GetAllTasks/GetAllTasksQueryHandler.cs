@@ -2,6 +2,7 @@
 using Tasks.Domain;
 using Tasks.Domain.Abstractions.Repositories.Queries;
 using Tasks.Domain.Shared;
+using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
 
 namespace Tasks.Application.Tasks.GetAllTasks
@@ -27,7 +28,7 @@ namespace Tasks.Application.Tasks.GetAllTasks
                         new TaskId(t.TaskId),
                         t.Title,
                         t.Description,
-                        TaskCategory.FromName(t.Category)))
+                        TaskCategory.Create(t.Category)))
                 .ToArray());
         }
     }

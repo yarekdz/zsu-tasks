@@ -1,4 +1,5 @@
 ﻿using Tasks.Domain;
+using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
 
 namespace Tasks.Application.Tasks.GetAllTasks

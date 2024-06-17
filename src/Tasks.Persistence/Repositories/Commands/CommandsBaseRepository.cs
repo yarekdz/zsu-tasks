@@ -41,7 +41,11 @@ namespace Tasks.Persistence.Repositories.Commands
 
             if (toUpdate != null)
             {
+                // Update the main entity's properties
                 Context.Entry(toUpdate).CurrentValues.SetValues(domainModel);
+
+                // Update navigation properties
+                UpdateNavigationProperties(toUpdate, domainModel);
 
                 if (Context.Entry(toUpdate).State == EntityState.Detached)
                 {
@@ -54,6 +58,35 @@ namespace Tasks.Persistence.Repositories.Commands
             await Context.SaveChangesAsync(ct);
 
             return response;
+        }
+
+        private void UpdateNavigationProperties(TDomainEntity toUpdate, TDomainEntity domainModel)
+        {
+            var navigationProperties = Context.Entry(toUpdate).Navigations;
+
+            foreach (var navigation in navigationProperties)
+            {
+                var domainModelNavigation = Context.Entry(domainModel).Navigation(navigation.Metadata.Name);
+                if (domainModelNavigation.CurrentValue != null)
+                {
+                    // Get the navigation property from the current entity and the domain model
+                    var nestedEntityToUpdate = navigation.CurrentValue;
+                    var nestedEntityDomainModel = domainModelNavigation.CurrentValue;
+
+                    if (nestedEntityToUpdate == null)
+                    {
+                        // If the nested entity in the database is null, create a new instance and set it
+                        nestedEntityToUpdate = Activator.CreateInstance(nestedEntityDomainModel.GetType());
+                        navigation.CurrentValue = nestedEntityToUpdate;
+                    }
+
+                    // Update the nested entity's properties
+                    Context.Entry(nestedEntityToUpdate).CurrentValues.SetValues(nestedEntityDomainModel);
+
+                    // Ensure nested entity is marked as modified
+                    Context.Entry(nestedEntityToUpdate).State = EntityState.Modified;
+                }
+            }
         }
 
         public async Task DeleteAsync(Guid id, CancellationToken ct, bool ignoreDependencies = false)

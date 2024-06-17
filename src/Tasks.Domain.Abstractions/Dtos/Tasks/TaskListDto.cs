@@ -5,6 +5,7 @@
         Guid TaskId,
         string Title,
         string Description,
-        string Category
+        string Category,
+        int Priority
     );
 }

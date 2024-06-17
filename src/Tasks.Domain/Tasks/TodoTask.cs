@@ -1,5 +1,6 @@
 ﻿using Tasks.Domain.Abstractions;
 using Tasks.Domain.Events.Tasks;
+using Tasks.Domain.Person;
 using Tasks.Domain.Shared;
 using Tasks.Domain.States;
 using Tasks.Domain.Tasks.TaskDetails;
@@ -37,11 +38,7 @@ namespace Tasks.Domain.Tasks
         #endregion
 
         public ITaskState State { get; private set; }
-        public TodoTaskStatus Status
-        {
-            get => State.Status;
-            private set{}
-        }
+        public TodoTaskStatus Status { get; private set; }
 
         private TodoTask(){}
 
@@ -54,6 +51,7 @@ namespace Tasks.Domain.Tasks
             MainInfo = mainInfo;
 
             State = new ConceptInactiveState();
+            Status = TodoTaskStatus.ConceptInactive;
 
             Stats = new TaskStatistic(TaskId)
             {
@@ -208,11 +206,37 @@ namespace Tasks.Domain.Tasks
         public override string ToString()
         {
             return
-                $"TaskId: {TaskId.Value.ToString()} | Title: {MainInfo.Title} | Created: {Stats?.CreatedDate:yyyy-MM-dd} | Status: {State.Status} | " +
+                $"TaskId: {TaskId.Value.ToString()} | Title: {MainInfo.Title} | Created: {Stats?.CreatedDate:yyyy-MM-dd} | Status: {Status} | " +
                 $"Estimation: {Estimation?.EstimatedWorkDuration} | " +
                (Stats is { StartedDate: { } } ? $"Stats: WorkStarted: {Stats?.StartedDate.Value:yyyy-MM-dd HH:mm} | ": "") +
                (Stats is { CompletionDate: { } } ? $"WorkCompleted: {Stats?.CompletionDate.Value:yyyy-MM-dd HH:mm} | " : "") +
                 $"{Stats?.ActualWorkDuration}";
+        }
+
+        public void SetTitle(string title)
+        {
+            if (!string.IsNullOrEmpty(title))
+            {
+                MainInfo.Title = title;
+            }
+        }
+
+        public void SetDescription(string description)
+        {
+            if (!string.IsNullOrEmpty(description))
+            {
+                MainInfo.Description = description;
+            }
+        }
+
+        public void SetPriority(Priority priority)
+        {
+            MainInfo.Priority = priority;
+        }
+
+        public void SetAssignee(PersonId assigneeId)
+        {
+            MainInfo.AssigneeId = assigneeId;
         }
     }
 }

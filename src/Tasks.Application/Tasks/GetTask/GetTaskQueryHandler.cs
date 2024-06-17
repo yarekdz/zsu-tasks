@@ -1,8 +1,10 @@
 ﻿using Tasks.Application.Abstractions.Messaging;
-using Tasks.Domain;
 using Tasks.Domain.Abstractions.Repositories.Queries;
+using Tasks.Domain.Person;
 using Tasks.Domain.Shared;
+using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
+using Tasks.Domain.ValueObjects;
 
 namespace Tasks.Application.Tasks.GetTask
 {
@@ -31,7 +33,14 @@ namespace Tasks.Application.Tasks.GetTask
                 new TaskId(taskSummary.TaskId),
                 taskSummary.Title,
                 taskSummary.Description,
-                TaskCategory.FromName(taskSummary.Category)));
+                TaskCategory.Create(taskSummary.Category),
+                Priority.Create(taskSummary.Priority),
+                new PersonId(taskSummary.OwnerId),
+                new PersonId(taskSummary.AssigneeId),
+                taskSummary.EstimatedStartDateTime,
+                taskSummary.EstimatedEndDateTime,
+                new Duration(taskSummary.EstimatedStartDateTime, taskSummary.EstimatedEndDateTime),
+                taskSummary.Status));
         }
     }
 }

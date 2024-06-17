@@ -1,6 +1,7 @@
 ﻿using Tasks.Application.Abstractions.Messaging;
 using Tasks.Domain;
 using Tasks.Domain.Person;
+using Tasks.Domain.Tasks;
 using Tasks.Domain.ValueObjects;
 
 namespace Tasks.Application.Tasks.Create

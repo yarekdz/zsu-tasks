@@ -19,14 +19,24 @@ namespace Tasks.Application.Tasks.Update
             _taskCommandsRepository = taskCommandsRepository;
         }
 
-        public async Task<Result> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateTaskCommand command, CancellationToken cancellationToken)
         {
-            var task = await _taskQueriesRepository.GetAsync(request.TaskId.Value, cancellationToken);
+            if (command.TaskId is null)
+            {
+                return Result.Failure(TaskErrors.TaskIdIsInvalid);
+            }
+
+            var task = await _taskQueriesRepository.GetAsync(command.TaskId.Value, cancellationToken);
 
             if (task == null)
             {
                 return Result.Failure(TaskErrors.TaskNotFound);
             }
+
+            task.SetTitle(command.Title);
+            task.SetDescription(command.Description);
+            task.SetPriority(command.Priority);
+            task.SetAssignee(command.AssigneeId);
 
             await _taskCommandsRepository.UpdateAsync(task, cancellationToken);
 

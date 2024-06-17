@@ -1,15 +1,17 @@
 using Carter;
+using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Tasks.Api.Extensions;
 using Tasks.Application.Tasks.Create;
 using Tasks.Application.Tasks.Delete;
 using Tasks.Application.Tasks.GetAllTasks;
-using Tasks.Application.Tasks.GetCompleteTasks;
+using Tasks.Application.Tasks.GetReleasedTasks;
 using Tasks.Application.Tasks.GetTask;
 using Tasks.Application.Tasks.Update;
-using Tasks.Domain.Shared;
 using Tasks.Domain.Tasks.TaskDetails;
+using Tasks.Presentation.Tasks.Requests;
 
 namespace Tasks.Api.Endpoints
 {
@@ -28,62 +30,61 @@ namespace Tasks.Api.Endpoints
             tasks.MapGet("/{id}", GetTask);
         }
 
-        private static async Task<IResult> GetAllTasks(IMediator mediator)
+        private static async Task<Results<Ok<GetAllTasksResponse[]>, ProblemHttpResult>> GetAllTasks(IMediator mediator)
         {
             var result = await mediator.Send(new GetAllTasksQuery());
-            //application response => api response 
 
             return result.IsSuccess ? TypedResults.Ok(result.Value) : result.ToProblemDetails();
         }
 
-        private static async Task<IResult> GetReleasedTasks(IMediator mediator)
+        private static async Task<Results<Ok<IEnumerable<GetReleasedTasksQueryResponse>>, ProblemHttpResult>>
+            GetReleasedTasks(IMediator mediator)
         {
             var result = await mediator.Send(new GetReleasedTasksQuery());
-            //application response => api response 
 
             return result.IsSuccess ? TypedResults.Ok(result.Value) : result.ToProblemDetails();
         }
 
-        private static async Task<IResult> GetTask(Guid id, IMediator mediator)
+        private static async Task<Results<Ok<GetTaskResponse>, ProblemHttpResult>> GetTask(Guid id, IMediator mediator)
         {
             var result = await mediator.Send(new GetTaskQuery(new TaskId(id)));
-            //application response => api response 
 
             return result.IsSuccess ? TypedResults.Ok(result.Value) : result.ToProblemDetails();
         }
 
-        private static async Task<IResult> CreateTask(
-            [FromBody] CreateTaskCommand command,
+        private static async Task<Results<Created<CreateTaskRequest>, ProblemHttpResult>> CreateTask(
+            [FromBody] CreateTaskRequest request,
             IMediator mediator)
         {
-            //Task: request => command
-            //todo: var command  = request.Adapt<CreateTaskCommand>();
+            var command = request.Adapt<CreateTaskCommand>();
+
             var result = await mediator.Send(command);
 
-            return result.Match(
-                onSuccess: () => TypedResults.Created($"/api/tasks{result.Value}", command),
-                onFailure: _ => result.ToProblemDetails());
+            return result.IsSuccess
+                ? TypedResults.Created($"/api/tasks{result.Value}", request)
+                : result.ToProblemDetails();
         }
 
-        private static async Task<IResult> UpdateTask(Guid id,
-            [FromBody] UpdateTaskCommand command,
+        private static async Task<Results<NoContent, ProblemHttpResult>> UpdateTask(
+            Guid id,
+            [FromBody] UpdateTaskRequest request,
             IMediator mediator)
         {
-            //Task: request => command
+            var command = request.Adapt<UpdateTaskCommand>();
+            command.TaskId = new TaskId(id);
+
             var result = await mediator.Send(command);
 
-            return result.Match(
-                onSuccess: TypedResults.NoContent,
-                onFailure: _ => result.ToProblemDetails());
+            return result.IsSuccess ? TypedResults.NoContent() : result.ToProblemDetails();
         }
 
-        private static async Task<IResult> DeleteTask(Guid id, IMediator mediator)
+        private static async Task<Results<NoContent, ProblemHttpResult>> DeleteTask(
+            Guid id,
+            IMediator mediator)
         {
             var result = await mediator.Send(new DeleteTaskCommand(new TaskId(id)));
 
-            return result.Match(
-                onSuccess: TypedResults.NoContent,
-                onFailure: _ => result.ToProblemDetails());
+            return result.IsSuccess ? TypedResults.NoContent() : result.ToProblemDetails();
         }
     }
 }

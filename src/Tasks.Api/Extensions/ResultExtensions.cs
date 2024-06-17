@@ -1,17 +1,18 @@
-﻿using Tasks.Domain.Shared;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Tasks.Domain.Shared;
 
 namespace Tasks.Api.Extensions
 {
     public static class ResultExtensions
     {
-        public static IResult ToProblemDetails(this Result result)
+        public static ProblemHttpResult ToProblemDetails(this Result result)
         {
             if (result.IsSuccess)
             {
                 throw new InvalidOperationException("Can't convert success result to problem");
             }
 
-            return Results.Problem(
+            return TypedResults.Problem(
                 statusCode: StatusCode(result.Error.Type),
                 title: Title(result.Error.Type),
                 type: Type(result.Error.Type),

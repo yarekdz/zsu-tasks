@@ -4,10 +4,13 @@ using Asp.Versioning.ApiExplorer;
 using Asp.Versioning.Builder;
 using Carter;
 using HealthChecks.UI.Client;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using Tasks.Api.Extensions;
 using Tasks.Api.Infrastructure;
+using Tasks.Api.Mapper;
 using Tasks.Api.OpenApi;
 using Tasks.Application;
 using Tasks.Persistence;
@@ -56,6 +59,8 @@ namespace Tasks.Api
 
             builder.Host.UseSerilog((context, configuration) =>
                 configuration.ReadFrom.Configuration(context.Configuration));
+
+            builder.Services.AddMappings();
 
             var app = builder.Build();
 

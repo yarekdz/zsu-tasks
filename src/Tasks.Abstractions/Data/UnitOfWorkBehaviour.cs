@@ -24,7 +24,7 @@ namespace Tasks.Application.Abstractions.Data
                 return await next();
             }
 
-            using var transactionScope = new TransactionScope();
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             var response = await next();
 

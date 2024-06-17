@@ -19,5 +19,7 @@
 
             return new Priority((int)value);
         }
+
+        public override string ToString() => Value.ToString();
     }
 }

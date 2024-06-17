@@ -5,7 +5,10 @@ namespace Tasks.Domain.Errors
     public static class TaskErrors
     {
         public static Error TaskNotFound = Error.NotFound("TaskErrors.TaskNotFound",
-            "Task not found");
+            "Task not found.");
+
+        public static Error TaskIdIsInvalid = Error.Validation("TaskErrors.TaskIdIsInvalid",
+            "TaskId should be provided.");
 
         public static class Create
         {
