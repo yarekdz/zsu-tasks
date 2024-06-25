@@ -1,12 +1,11 @@
-﻿namespace Tasks.Domain.Abstractions.Dtos.Tasks
+﻿namespace Tasks.Presentation.Tasks.Responses
 {
-    public record TaskListDto(
+    public record TaskResponseView(
         Guid Id,
         Guid TaskId,
         string Title,
         string Description,
         string Category,
         int Priority,
-        int Status
-    );
+        string Status);
 }

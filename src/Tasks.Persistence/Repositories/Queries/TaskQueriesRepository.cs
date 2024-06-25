@@ -28,7 +28,8 @@ namespace Tasks.Persistence.Repositories.Queries
                         ""MainInfo_Title"" AS ""Title"",
                         ""MainInfo_Description"" AS ""Description"",
                         ""MainInfo_Category"" AS ""Category"",
-                        ""MainInfo_Priority"" AS ""Priority""
+                        ""MainInfo_Priority"" AS ""Priority"",
+                        ""Status"" AS ""Status""
                     FROM 
                         PUBLIC.""Tasks"" t
                     WHERE 
@@ -47,12 +48,12 @@ namespace Tasks.Persistence.Repositories.Queries
         {
             return await _dbContext
                 .Database
-                .SqlQuery<TaskSummary?>(@$"""
+                .SqlQuery<TaskSummary>($@"
                     SELECT *
                     FROM public.""Tasks"" t
                     WHERE t.""Id"" = {id}
-                """)
-                .IgnoreQueryFilters<TaskSummary>()
+                ")
+                .IgnoreQueryFilters()
                 .SingleOrDefaultAsync(ct);
         }
 
@@ -67,12 +68,13 @@ namespace Tasks.Persistence.Repositories.Queries
                         ""MainInfo_Title"" AS ""Title"",
                         ""MainInfo_Description"" AS ""Description"",
                         ""MainInfo_Category"" AS ""Category"",
-                        ""MainInfo_Priority"" AS ""Priority""
+                        ""MainInfo_Priority"" AS ""Priority"",
+                        ""Status"" AS ""Status""
                     FROM 
                         PUBLIC.""Tasks"" t
                     WHERE 
                         t.""IsDeleted"" = False 
-                        AND t.""Status"" = '{TodoTaskStatus.Released}'")
+                        AND t.""Status"" = {TodoTaskStatus.Released}")
                 .ToListAsync(ct);
         }
     }

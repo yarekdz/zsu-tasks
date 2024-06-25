@@ -39,7 +39,7 @@ namespace Tasks.Application.Tasks.GetTask
                 new PersonId(taskSummary.MainInfo_AssigneeId),
                 taskSummary.Estimation_EstimatedStartDateTime,
                 taskSummary.Estimation_EstimatedEndDateTime,
-                new Duration(taskSummary.Estimation_EstimatedStartDateTime, taskSummary.Estimation_EstimatedEndDateTime),
+                Duration.Create(taskSummary.Estimation_EstimatedStartDateTime, taskSummary.Estimation_EstimatedEndDateTime),
                 taskSummary.Status));
         }
     }

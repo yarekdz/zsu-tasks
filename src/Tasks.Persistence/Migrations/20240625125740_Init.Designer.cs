@@ -12,7 +12,7 @@ using Tasks.Persistence;
 namespace Tasks.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240604134604_Init")]
+    [Migration("20240625125740_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -28,69 +28,132 @@ namespace Tasks.Persistence.Migrations
             modelBuilder.Entity("Tasks.Domain.Person.Person", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("PersonId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
 
+                    b.HasIndex("PersonId")
+                        .IsUnique();
+
                     b.ToTable("Persons");
+                });
+
+            modelBuilder.Entity("Tasks.Domain.Tasks.TaskDetails.TaskStatistic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ApprovedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("CompletionDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ReleasedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("StartedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("VerifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskId")
+                        .IsUnique();
+
+                    b.ToTable("TaskStatistic");
                 });
 
             modelBuilder.Entity("Tasks.Domain.Tasks.TodoTask", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Status")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TaskId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TaskId")
+                        .IsUnique();
 
                     b.ToTable("Tasks");
                 });
 
+            modelBuilder.Entity("Tasks.Domain.Tasks.TaskDetails.TaskStatistic", b =>
+                {
+                    b.HasOne("Tasks.Domain.Tasks.TodoTask", "Task")
+                        .WithOne("Stats")
+                        .HasForeignKey("Tasks.Domain.Tasks.TaskDetails.TaskStatistic", "TaskId")
+                        .HasPrincipalKey("Tasks.Domain.Tasks.TodoTask", "TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Task");
+                });
+
             modelBuilder.Entity("Tasks.Domain.Tasks.TodoTask", b =>
                 {
-                    b.OwnsOne("Tasks.Domain.Tasks.TaskDetails.TaskStatistic", "Stats", b1 =>
-                        {
-                            b1.Property<Guid>("TaskId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime?>("ApprovedDate")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime?>("CompletionDate")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime>("CreatedDate")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime?>("ReleasedDate")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime?>("StartedDate")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime?>("VerifiedDate")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.HasKey("TaskId");
-
-                            b1.ToTable("Tasks");
-
-                            b1.WithOwner()
-                                .HasForeignKey("TaskId");
-                        });
-
                     b.OwnsOne("Tasks.Domain.Tasks.TaskDetails.TaskEstimation", "Estimation", b1 =>
                         {
                             b1.Property<Guid>("TodoTaskId")
@@ -149,12 +212,14 @@ namespace Tasks.Persistence.Migrations
                             b1.HasOne("Tasks.Domain.Person.Person", null)
                                 .WithMany()
                                 .HasForeignKey("AssigneeId")
+                                .HasPrincipalKey("PersonId")
                                 .OnDelete(DeleteBehavior.Cascade)
                                 .IsRequired();
 
                             b1.HasOne("Tasks.Domain.Person.Person", null)
                                 .WithMany()
                                 .HasForeignKey("OwnerId")
+                                .HasPrincipalKey("PersonId")
                                 .OnDelete(DeleteBehavior.Cascade)
                                 .IsRequired();
 
@@ -166,7 +231,10 @@ namespace Tasks.Persistence.Migrations
 
                     b.Navigation("MainInfo")
                         .IsRequired();
+                });
 
+            modelBuilder.Entity("Tasks.Domain.Tasks.TodoTask", b =>
+                {
                     b.Navigation("Stats");
                 });
 #pragma warning restore 612, 618

@@ -98,7 +98,7 @@ namespace Tasks.Domain.Tasks
 
             Estimation = estimation;
             Estimation.EstimatedWorkDuration =
-                new Duration(estimation.EstimatedStartDateTime, estimation.EstimatedEndDateTime);
+                Duration.Create(estimation.EstimatedStartDateTime, estimation.EstimatedEndDateTime);
         }
 
         #region v2
@@ -144,7 +144,7 @@ namespace Tasks.Domain.Tasks
 
             Stats ??= new TaskStatistic(TaskId);
             Stats.CompletionDate = DateTime.UtcNow;
-            Stats.ActualWorkDuration = new Duration(Stats.StartedDate, Stats.CompletionDate);
+            Stats.ActualWorkDuration = Duration.Create(Stats.StartedDate, Stats.CompletionDate);
             Flags.IsCompleted = true;
         }
 

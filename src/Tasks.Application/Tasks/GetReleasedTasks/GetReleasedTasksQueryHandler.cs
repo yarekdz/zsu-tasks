@@ -1,6 +1,7 @@
 ﻿using Tasks.Application.Abstractions.Messaging;
 using Tasks.Domain.Abstractions.Repositories.Queries;
 using Tasks.Domain.Shared;
+using Tasks.Domain.States;
 using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
 using Tasks.Domain.ValueObjects;
@@ -30,7 +31,8 @@ namespace Tasks.Application.Tasks.GetReleasedTasks
                     t.Title,
                     t.Description,
                     TaskCategory.Create(t.Category),
-                    Priority.Create(t.Priority))));
+                    Priority.Create(t.Priority),
+                    (TodoTaskStatus)t.Status)));
         }
     }
 }

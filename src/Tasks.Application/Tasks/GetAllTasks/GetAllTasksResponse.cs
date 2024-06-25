@@ -1,6 +1,8 @@
 ﻿using Tasks.Domain;
+using Tasks.Domain.States;
 using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
+using Tasks.Domain.ValueObjects;
 
 namespace Tasks.Application.Tasks.GetAllTasks
 {
@@ -9,5 +11,7 @@ namespace Tasks.Application.Tasks.GetAllTasks
         TaskId TaskId, 
         string Title, 
         string? Description, 
-        TaskCategory? Category);
+        TaskCategory? Category,
+        Priority? Priority,
+        TodoTaskStatus Status);
 }

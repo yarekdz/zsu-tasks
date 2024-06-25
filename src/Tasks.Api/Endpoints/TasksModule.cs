@@ -12,6 +12,7 @@ using Tasks.Application.Tasks.GetTask;
 using Tasks.Application.Tasks.Update;
 using Tasks.Domain.Tasks.TaskDetails;
 using Tasks.Presentation.Tasks.Requests;
+using Tasks.Presentation.Tasks.Responses;
 
 namespace Tasks.Api.Endpoints
 {
@@ -30,26 +31,26 @@ namespace Tasks.Api.Endpoints
             tasks.MapGet("/{id}", GetTask);
         }
 
-        private static async Task<Results<Ok<GetAllTasksResponse[]>, ProblemHttpResult>> GetAllTasks(IMediator mediator)
+        private static async Task<Results<Ok<TaskResponseView[]>, ProblemHttpResult>> GetAllTasks(IMediator mediator)
         {
             var result = await mediator.Send(new GetAllTasksQuery());
 
-            return result.IsSuccess ? TypedResults.Ok(result.Value) : result.ToProblemDetails();
+            return result.IsSuccess ? TypedResults.Ok(result.Value.Adapt<TaskResponseView[]>()) : result.ToProblemDetails();
         }
 
-        private static async Task<Results<Ok<IEnumerable<GetReleasedTasksQueryResponse>>, ProblemHttpResult>>
+        private static async Task<Results<Ok<IEnumerable<TaskResponseView>>, ProblemHttpResult>>
             GetReleasedTasks(IMediator mediator)
         {
             var result = await mediator.Send(new GetReleasedTasksQuery());
 
-            return result.IsSuccess ? TypedResults.Ok(result.Value) : result.ToProblemDetails();
+            return result.IsSuccess ? TypedResults.Ok(result.Value.Adapt<IEnumerable<TaskResponseView>>()) : result.ToProblemDetails();
         }
 
-        private static async Task<Results<Ok<GetTaskResponse>, ProblemHttpResult>> GetTask(Guid id, IMediator mediator)
+        private static async Task<Results<Ok<TaskDetailsResponseView>, ProblemHttpResult>> GetTask(Guid id, IMediator mediator)
         {
-            var result = await mediator.Send(new GetTaskQuery(new TaskId(id)));
+            var getTaskResult = await mediator.Send(new GetTaskQuery(new TaskId(id)));
 
-            return result.IsSuccess ? TypedResults.Ok(result.Value) : result.ToProblemDetails();
+            return getTaskResult.IsSuccess ? TypedResults.Ok(getTaskResult.Value.Adapt<TaskDetailsResponseView>()) : getTaskResult.ToProblemDetails();
         }
 
         private static async Task<Results<Created<CreateTaskRequest>, ProblemHttpResult>> CreateTask(

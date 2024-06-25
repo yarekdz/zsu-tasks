@@ -1,4 +1,5 @@
-﻿using Tasks.Domain.Tasks;
+﻿using Tasks.Domain.States;
+using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
 using Tasks.Domain.ValueObjects;
 
@@ -10,5 +11,6 @@ namespace Tasks.Application.Tasks.GetReleasedTasks
         string Title,
         string? Description,
         TaskCategory? Category,
-        Priority? Priority);
+        Priority? Priority,
+        TodoTaskStatus Status);
 }

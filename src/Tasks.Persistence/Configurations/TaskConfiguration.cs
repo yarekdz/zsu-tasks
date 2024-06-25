@@ -72,9 +72,7 @@ namespace Tasks.Persistence.Configurations
             builder.Ignore(t => t.Flags);
             builder.Ignore(t => t.State);
 
-            builder.Property(t => t.Status).HasMaxLength(50)
-                .HasConversion(status => status.ToString(),
-                    status => (TodoTaskStatus)Enum.Parse(typeof(TodoTaskStatus), status));
+            builder.Property(t => t.Status).HasConversion<int>();
         }
     }
 }

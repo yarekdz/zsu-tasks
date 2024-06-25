@@ -9,19 +9,26 @@ namespace Tasks.Domain.ValueObjects
         public DateTime Start { get; }
         public DateTime End { get; }
 
-        public Duration(DateTime? start, DateTime? end)
+        public static Duration? Create(DateTime? start, DateTime? end)
         {
             if (!start.HasValue || !end.HasValue)
             {
-                throw new DomainValidationException(TaskErrors.Estimate.InvalidDuration);
+                return null;
             }
+
+            return new Duration(start.Value, end.Value);
+        }
+
+        private Duration(DateTime start, DateTime end)
+        {
+          
             if (start > end)
             {
                 throw new DomainValidationException(TaskErrors.Estimate.StartDateCouldNotBeGreaterThanEndDate);
             }
 
-            Start = start.Value;
-            End = end.Value;
+            Start = start;
+            End = end;
         }
 
         public TimeSpan TotalDuration => End - Start;
