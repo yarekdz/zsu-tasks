@@ -37,6 +37,7 @@ namespace Tasks.Api.Infrastructure
                     _logger.LogError(argumentNullException, "ArgumentNullException occurred : {Message}",
                         argumentNullException.Message);
                     break;
+                //todo: add more exceptions
                 default:
                     problemDetails = new ProblemDetails
                     {

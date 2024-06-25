@@ -5,13 +5,13 @@ namespace Tasks.Domain.Abstractions.Dtos.Tasks
     public record TaskSummary(
         Guid Id,
         Guid TaskId,
-        string Title,
-        string Description,
-        string Category,
-        int Priority,
-        Guid OwnerId,
-        Guid AssigneeId,
-        DateTime? EstimatedStartDateTime,
-        DateTime? EstimatedEndDateTime,
+        string MainInfo_Title,
+        string MainInfo_Description,
+        string MainInfo_Category,
+        int MainInfo_Priority,
+        Guid MainInfo_OwnerId,
+        Guid MainInfo_AssigneeId,
+        DateTime? Estimation_EstimatedStartDateTime,
+        DateTime? Estimation_EstimatedEndDateTime,
         TodoTaskStatus Status);
 }

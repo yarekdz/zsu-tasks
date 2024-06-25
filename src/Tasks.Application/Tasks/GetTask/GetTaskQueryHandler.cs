@@ -31,15 +31,15 @@ namespace Tasks.Application.Tasks.GetTask
             return Result.Success(new GetTaskResponse(
                 taskSummary.Id,
                 new TaskId(taskSummary.TaskId),
-                taskSummary.Title,
-                taskSummary.Description,
-                TaskCategory.Create(taskSummary.Category),
-                Priority.Create(taskSummary.Priority),
-                new PersonId(taskSummary.OwnerId),
-                new PersonId(taskSummary.AssigneeId),
-                taskSummary.EstimatedStartDateTime,
-                taskSummary.EstimatedEndDateTime,
-                new Duration(taskSummary.EstimatedStartDateTime, taskSummary.EstimatedEndDateTime),
+                taskSummary.MainInfo_Title,
+                taskSummary.MainInfo_Description,
+                TaskCategory.Create(taskSummary.MainInfo_Category),
+                Priority.Create(taskSummary.MainInfo_Priority),
+                new PersonId(taskSummary.MainInfo_OwnerId),
+                new PersonId(taskSummary.MainInfo_AssigneeId),
+                taskSummary.Estimation_EstimatedStartDateTime,
+                taskSummary.Estimation_EstimatedEndDateTime,
+                new Duration(taskSummary.Estimation_EstimatedStartDateTime, taskSummary.Estimation_EstimatedEndDateTime),
                 taskSummary.Status));
         }
     }

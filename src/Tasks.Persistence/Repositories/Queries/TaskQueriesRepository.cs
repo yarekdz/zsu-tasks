@@ -47,23 +47,12 @@ namespace Tasks.Persistence.Repositories.Queries
         {
             return await _dbContext
                 .Database
-                .SqlQuery<TaskSummary?>(@$"
-                     SELECT 
-                        ""Id"",
-                        ""TaskId"",
-                        ""MainInfo_Title"" AS ""Title"",
-                        ""MainInfo_Description"" AS ""Description"",
-                        ""MainInfo_Category"" AS ""Category"",
-                        ""MainInfo_Priority"" AS ""Priority"",
-                        ""MainInfo_OwnerId"" AS ""OwnerId"",
-                        ""MainInfo_AssigneeId"" AS ""AssigneeId"",
-                        ""Estimation_EstimatedStartDateTime"" AS ""EstimatedStartDateTime"",
-                        ""Estimation_EstimatedEndDateTime"" AS ""EstimatedEndDateTime"",
-                        ""Status"" AS ""Status""
-                    FROM 
-                        PUBLIC.""Tasks"" t
-                    WHERE 
-                        t.""Id"" = {id}")
+                .SqlQuery<TaskSummary?>(@$"""
+                    SELECT *
+                    FROM public.""Tasks"" t
+                    WHERE t.""Id"" = {id}
+                """)
+                .IgnoreQueryFilters<TaskSummary>()
                 .SingleOrDefaultAsync(ct);
         }
 

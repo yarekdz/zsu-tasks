@@ -61,7 +61,7 @@ namespace Tasks.Api.Endpoints
             var result = await mediator.Send(command);
 
             return result.IsSuccess
-                ? TypedResults.Created($"/api/tasks{result.Value}", request)
+                ? TypedResults.Created($"/api/tasks/{result.Value}", request)
                 : result.ToProblemDetails();
         }
 
