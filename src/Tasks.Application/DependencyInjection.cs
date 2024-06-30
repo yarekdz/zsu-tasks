@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Tasks.Application.Abstractions.Data;
+using Tasks.Application.Validation;
 
 namespace Tasks.Application
 {
@@ -7,12 +10,16 @@ namespace Tasks.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddMediatR(configuration =>
-            {
-                configuration.RegisterServicesFromAssemblyContaining<AssemblyReference>();
+            services.AddValidatorsFromAssembly(typeof(AssemblyReference).Assembly);
 
-                configuration.AddOpenBehavior(typeof(UnitOfWorkBehaviour<,>));
-            });
+            services.AddMediatR(configuration =>
+                {
+                    configuration.RegisterServicesFromAssemblyContaining<AssemblyReference>();
+                    //.AddValidation<CreateTaskCommand, TodoTask>();
+
+                    configuration.AddOpenBehavior(typeof(UnitOfWorkBehaviour<,>));
+                })
+                .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
             return services;
         }

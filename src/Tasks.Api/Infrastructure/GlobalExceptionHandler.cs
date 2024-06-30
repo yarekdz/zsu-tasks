@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Tasks.Domain.Shared;
 
 namespace Tasks.Api.Infrastructure
 {
@@ -36,6 +37,19 @@ namespace Tasks.Api.Infrastructure
 
                     _logger.LogError(argumentNullException, "ArgumentNullException occurred : {Message}",
                         argumentNullException.Message);
+                    break;
+                case DomainValidationException domainValidationException:
+                    problemDetails = new ProblemDetails
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        Type = domainValidationException.Error.Type.ToString(),
+                        Title = domainValidationException.Error.Code,
+                        Detail = domainValidationException.Error.Message,
+                        Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
+                    };
+
+                    _logger.LogError(exception, "Domain validation occurred: Code: {Code} | Message: {Message}",
+                        domainValidationException.Error.Code, domainValidationException.Message);
                     break;
                 //todo: add more exceptions
                 default:

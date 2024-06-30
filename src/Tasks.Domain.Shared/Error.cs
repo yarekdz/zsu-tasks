@@ -16,6 +16,11 @@
             Type = type;
         }
 
+        public override string ToString()
+        {
+            return $"{Code}: {Message}";
+        }
+
         public static Error NotFound(string code, string message) =>
             new(code, message, ErrorType.NotFound);
 
