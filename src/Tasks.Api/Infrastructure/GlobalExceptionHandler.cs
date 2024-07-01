@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using Tasks.Domain.Shared;
 
 namespace Tasks.Api.Infrastructure
@@ -25,31 +24,27 @@ namespace Tasks.Api.Infrastructure
             ProblemDetails problemDetails;
             switch (exception)
             {
-                case ArgumentNullException argumentNullException:
-                    problemDetails = new ProblemDetails
-                    {
-                        Status = (int)HttpStatusCode.NotFound,
-                        Type = argumentNullException.GetType().Name,
-                        Title = "An unexpected error occurred",
-                        Detail = argumentNullException.Message,
-                        Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}",
-                    };
-
-                    _logger.LogError(argumentNullException, "ArgumentNullException occurred : {Message}",
-                        argumentNullException.Message);
-                    break;
                 case DomainValidationException domainValidationException:
                     problemDetails = new ProblemDetails
                     {
-                        Status = StatusCodes.Status400BadRequest,
                         Type = domainValidationException.Error.Type.ToString(),
                         Title = domainValidationException.Error.Code,
                         Detail = domainValidationException.Error.Message,
                         Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
                     };
 
-                    _logger.LogError(exception, "Domain validation occurred: Code: {Code} | Message: {Message}",
-                        domainValidationException.Error.Code, domainValidationException.Message);
+                    var error = domainValidationException.Error;
+                    problemDetails.Status = error.Type switch
+                    {
+                        ErrorType.Failure => StatusCodes.Status500InternalServerError,
+                        ErrorType.Validation => StatusCodes.Status400BadRequest,
+                        ErrorType.Conflict => StatusCodes.Status409Conflict,
+                        ErrorType.NotFound => StatusCodes.Status404NotFound,
+                        _ => problemDetails.Status
+                    };
+
+                    _logger.LogError(exception, "Domain exception occurred: Type: {Type} | Code: {Code} | Message: {Message}",
+                        error.Type.ToString(), error.Code, error.Message);
                     break;
                 //todo: add more exceptions
                 default:

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using Tasks.Domain.Abstractions.Repositories.Queries;
 using Tasks.Domain.Errors;
 using Tasks.Domain.Tasks;
@@ -11,12 +6,12 @@ using Tasks.Domain.ValueObjects;
 
 namespace Tasks.Application.Tasks.Create
 {
-    public class CreateTaskValidator : AbstractValidator<CreateTaskCommand>
+    public sealed class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommand>
     {
         //private readonly ITaskQueriesRepository _taskQueriesRepository;
 
-        public CreateTaskValidator()
-        //public CreateTaskValidator(ITaskQueriesRepository taskQueriesRepository)
+        public CreateTaskCommandValidator()
+        //public CreateTaskCommandValidator(ITaskQueriesRepository taskQueriesRepository)
         {
             //_taskQueriesRepository = taskQueriesRepository;
 
@@ -27,6 +22,7 @@ namespace Tasks.Application.Tasks.Create
 
             RuleFor(x => x.Description)
                 .NotEmpty();
+
 
             //HighRisky category tasks should have  5 highest Priority
             RuleFor(x => x.Priority)

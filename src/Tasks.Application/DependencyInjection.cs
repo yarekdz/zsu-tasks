@@ -10,16 +10,17 @@ namespace Tasks.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddValidatorsFromAssembly(typeof(AssemblyReference).Assembly);
 
             services.AddMediatR(configuration =>
                 {
                     configuration.RegisterServicesFromAssemblyContaining<AssemblyReference>();
-                    //.AddValidation<CreateTaskCommand, TodoTask>();
 
                     configuration.AddOpenBehavior(typeof(UnitOfWorkBehaviour<,>));
                 })
                 .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+
+            services.AddValidatorsFromAssembly(typeof(AssemblyReference).Assembly,
+                includeInternalTypes: true);
 
             return services;
         }

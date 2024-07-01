@@ -5,13 +5,14 @@ using Tasks.Domain.Shared;
 namespace Tasks.Application.Validation
 {
     public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : notnull
+        where TRequest : IRequest<TResponse>
+        where TResponse : Result
     {
-        private readonly IValidator<TRequest> _validator;
+        private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-        public ValidationBehaviour(IValidator<TRequest> validator)
+        public ValidationBehaviour(IEnumerable<IValidator<TRequest>> validators)
         {
-            _validator = validator;
+            _validators = validators;
         }
 
         public async Task<TResponse> Handle(
@@ -19,14 +20,45 @@ namespace Tasks.Application.Validation
             RequestHandlerDelegate<TResponse> next,
             CancellationToken cancellationToken)
         {
-            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+            if (!_validators.Any())
+            {
+                return await next();
+            }
 
-            if (validationResult.IsValid) return await next();
+            Error[] errors = _validators
+                .Select(validator => validator.Validate(request))
+                .SelectMany(validationResult => validationResult.Errors)
+                .Where(validationFailure => validationFailure is not null)
+                .Select(failure => Error.Validation(
+                    !string.IsNullOrEmpty(failure.ErrorCode) ? 
+                        failure.ErrorCode : failure.PropertyName,
+                    failure.ErrorMessage))
+                .Distinct()
+                .ToArray();
 
-            var firstValidationError = validationResult.Errors.First();
+            if (errors.Any())
+            {
+                return CreateValidationResult<TResponse>(errors);
+            }
 
-            throw new DomainValidationException(Error.Validation(firstValidationError.ErrorCode,
-                firstValidationError.ErrorMessage));
+            return await next();
+        }
+
+        private static TResult CreateValidationResult<TResult>(Error[] errors)
+            where TResult : Result
+        {
+            if (typeof(TResult) == typeof(Result))
+            {
+                return (ValidationResult.WithErrors(errors) as TResult)!;
+            }
+
+            object validationResult = typeof(ValidationResult<>)
+                .GetGenericTypeDefinition()
+                .MakeGenericType(typeof(TResult).GenericTypeArguments[0])
+                .GetMethod(nameof(ValidationResult.WithErrors))!
+                .Invoke(null, new object?[] { errors })!;
+
+            return (TResult)validationResult;
         }
     }
 }
