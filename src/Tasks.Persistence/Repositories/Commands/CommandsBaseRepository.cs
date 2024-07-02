@@ -109,14 +109,38 @@ namespace Tasks.Persistence.Repositories.Commands
                 throw new DomainValidationException(DbErrors.SingleDeleteDeniedMessage(typeof(TDomainEntity).Name, userFriendlyId?.ToString()));
             }
 
-            if (Context.Entry(toDelete).State == EntityState.Detached)
-            {
-                DbSet.Attach(toDelete);
-            }
-
-            toDelete.IsDeleted = true;
+            // Mark the entity and its dependents as deleted
+            MarkEntityAsDeleted(toDelete);
 
             await Context.SaveChangesAsync(ct);
+        }
+
+        private void MarkEntityAsDeleted(TDomainEntity entity)
+        {
+            if (Context.Entry(entity).State == EntityState.Detached)
+            {
+                DbSet.Attach(entity);
+            }
+
+            entity.IsDeleted = true;
+
+            foreach (var navigationEntry in Context.Entry(entity).Navigations.Where(x => !IsOwnedType(x)))
+            {
+                if (navigationEntry is CollectionEntry { CurrentValue: { } } collectionEntry)
+                {
+                    foreach (var dependentEntity in collectionEntry.CurrentValue)
+                    {
+                        if (dependentEntity is Entity dependent)
+                        {
+                            dependent.IsDeleted = true;
+                        }
+                    }
+                }
+                else if (navigationEntry is ReferenceEntry { CurrentValue: Entity dependent })
+                {
+                    dependent.IsDeleted = true;
+                }
+            }
         }
 
         public async Task DeleteAsync(Guid[] ids, CancellationToken ct, bool ignoreDependencies = false)
@@ -151,15 +175,29 @@ namespace Tasks.Persistence.Repositories.Commands
         {
             var query = DbSet.AsQueryable();
 
-            var navigations = Context.Model.FindEntityType(typeof(TDomainEntity))
-                ?.GetDerivedTypesInclusive()
+            var entityType = Context.Model.FindEntityType(typeof(TDomainEntity));
+            if (entityType == null)
+            {
+                return query;
+            }
+
+            var ownedTypes = Context.Model.GetEntityTypes()
+                .Where(t => t.IsOwned())
+                .Select(t => t.ClrType)
+                .ToHashSet();
+
+            var navigations = entityType
+                .GetDerivedTypesInclusive()
                 .SelectMany(type => type.GetNavigations().Where(x =>
                     x.PropertyInfo != null && !x.IsOnDependent &&
-                    !x.PropertyInfo.GetCustomAttributes(typeof(IgnoreOnDeleteAttribute), true).Any()))
+                    !x.PropertyInfo.GetCustomAttributes(typeof(IgnoreOnDeleteAttribute), true).Any() &&
+                    !ownedTypes.Contains(x.ClrType)))
                 .Distinct();
 
             if (navigations != null)
+            {
                 query = navigations.Aggregate(query, (current, property) => current.Include(property.Name));
+            }
 
             return query;
         }
@@ -175,8 +213,10 @@ namespace Tasks.Persistence.Repositories.Commands
             foreach (var entry in entries)
             {
                 foreach (var navigationEntry in entry.Navigations.Where(x =>
-                             x.Metadata.PropertyInfo != null && !((IReadOnlyNavigation)x.Metadata).IsOnDependent && !x.Metadata.PropertyInfo
-                                 .GetCustomAttributes(typeof(IgnoreOnDeleteAttribute), true).Any()))
+                             x.Metadata.PropertyInfo != null &&
+                             !((IReadOnlyNavigation)x.Metadata).IsOnDependent &&
+                             !x.Metadata.PropertyInfo.GetCustomAttributes(typeof(IgnoreOnDeleteAttribute), true).Any() &&
+                             !IsOwnedType(x)))
                 {
                     if (navigationEntry is CollectionEntry { CurrentValue: { } } collectionEntry)
                     {
@@ -186,15 +226,21 @@ namespace Tasks.Persistence.Repositories.Commands
                                 return false;
                         }
                     }
-                    else
+                    else if (navigationEntry is ReferenceEntry { CurrentValue: { } } referenceEntry)
                     {
-                        if (navigationEntry.CurrentValue != null && !IsDependentDeleted(navigationEntry.CurrentValue))
+                        if (!IsDependentDeleted(referenceEntry.CurrentValue))
                             return false;
                     }
                 }
             }
 
             return true;
+        }
+
+        private bool IsOwnedType(NavigationEntry navigationEntry)
+        {
+            var entityType = navigationEntry.Metadata.ClrType;
+            return Context.Model.FindEntityType(entityType)?.IsOwned() == true;
         }
 
         protected virtual bool IsDependentDeleted(object? dependant)

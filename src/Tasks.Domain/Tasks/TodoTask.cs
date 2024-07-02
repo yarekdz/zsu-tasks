@@ -55,7 +55,8 @@ namespace Tasks.Domain.Tasks
 
             Stats = new TaskStatistic(TaskId)
             {
-                CreatedDate = DateTime.UtcNow,
+                CreatedDate = CreatedAt,
+                Task = this
             };
         }
 

@@ -8,10 +8,11 @@ namespace Tasks.Domain.Tasks.TaskDetails
         public TaskStatistic(TaskId taskId)
         {
             TaskId = taskId;
+            CreatedAt = DateTime.UtcNow;
         }
 
         public TaskId TaskId { get; }
-        public TodoTask Task { get; set; }
+        public TodoTask? Task { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? StartedDate { get; set; }
         public DateTime? CompletionDate { get; set; }

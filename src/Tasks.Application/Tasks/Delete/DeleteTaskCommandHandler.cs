@@ -28,7 +28,7 @@ namespace Tasks.Application.Tasks.Delete
                 return Result.Failure(TaskErrors.TaskNotFound);
             }
 
-            await _taskCommandsRepository.DeleteAsync(request.TaskId.Value, cancellationToken);
+            await _taskCommandsRepository.DeleteTaskAsync(request.TaskId.Value, cancellationToken);
 
             return Result.Success();
         }
