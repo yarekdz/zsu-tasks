@@ -6,32 +6,45 @@ namespace Tasks.Api.Extensions
     public static class ResultExtensions
     {
         public static ProblemHttpResult ToProblemDetails(this Result result)
-            =>
-                result switch
-                {
-                    { IsSuccess: true } => throw new InvalidOperationException(
-                        "Can't convert success result to problem"),
-                    IValidationResult validationResult =>
-                        TypedResults.Problem(
-                            statusCode: StatusCodes.Status400BadRequest,
-                            title: IValidationResult.ValidationError.Code,
-                            type: Type(ErrorType.Validation),
-                            extensions: new Dictionary<string, object?>
-                            {
-                                { nameof(validationResult.Errors), validationResult.Errors }
-                            }),
+        {
+            if (result.IsSuccess)
+            {
+                throw new InvalidOperationException("Can't convert success result to problem");
+            }
 
-                    _ =>
-                        TypedResults.Problem(
-                            statusCode: StatusCode(result.Error.Type),
-                            title: Title(result.Error.Type),
-                            type: Type(result.Error.Type),
-                            extensions: new Dictionary<string, object?>
-                            {
-                                { nameof(result.Error), new[] { result.Error } }
-                            })
+            return result switch
+            {
+                IValidationResult validationResult => CreateProblem(
+                    StatusCodes.Status400BadRequest,
+                    IValidationResult.ValidationError.Code,
+                    ErrorType.Validation,
+                    new Dictionary<string, object?>
+                    {
+                        { nameof(validationResult.Errors), validationResult.Errors }
+                    }),
 
-                };
+                _ => CreateProblem(
+                    StatusCode(result.Error.Type),
+                    Title(result.Error.Type),
+                    result.Error.Type,
+                    new Dictionary<string, object?>
+                    {
+                        { nameof(result.Error), new[] { result.Error } }
+                    })
+            };
+        }
+
+        private static ProblemHttpResult CreateProblem(
+            int statusCode,
+            string title,
+            ErrorType errorType,
+            Dictionary<string, object?> extensions) =>
+            TypedResults.Problem(
+                statusCode: statusCode,
+                title: title,
+                type: Type(errorType),
+                extensions: extensions
+            );
 
         static int StatusCode(ErrorType errorType) =>
             errorType switch

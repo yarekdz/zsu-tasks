@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Tasks.Application.Validation;
 using Tasks.Domain.Abstractions.Repositories.Queries;
 using Tasks.Domain.Errors;
 using Tasks.Domain.Tasks;
@@ -17,18 +18,18 @@ namespace Tasks.Application.Tasks.Create
 
             RuleFor(x => x.Title)
                 .NotEmpty()
-                .WithErrorCode(TaskErrors.Create.InvalidTitle.Code)
-                .WithMessage(TaskErrors.Create.InvalidTitle.Message);
+                .WithError(TaskErrors.Create.InvalidTitle);
 
             RuleFor(x => x.Description)
-                .NotEmpty();
+                .NotEmpty()
+                .WithError(TaskErrors.Create.InvalidDescription);
 
 
             //HighRisky category tasks should have  5 highest Priority
             RuleFor(x => x.Priority)
                 .Must(x => x == Priority.HightestPriority)
-                .When(x => x.Category == TaskCategory.HighRisky);
-            //todo: work with Errors
+                .When(x => x.Category == TaskCategory.HighRisky)
+                .WithError(TaskErrors.Create.InvalidPriorityForHighRiskyCategory);
 
         }
     }
