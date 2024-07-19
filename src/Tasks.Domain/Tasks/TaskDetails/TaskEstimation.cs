@@ -8,7 +8,7 @@ namespace Tasks.Domain.Tasks.TaskDetails
 
         public DateTime EstimatedEndDateTime { get; set; }
 
-        public Duration? EstimatedWorkDuration { get; set; }
+        public Duration? EstimatedWorkDuration => Duration.Create(EstimatedStartDateTime, EstimatedEndDateTime);
 
         #region v2 3 point estimate
 

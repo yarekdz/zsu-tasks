@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Tasks.Application.Abstractions.Data;
 using Tasks.Application.Validation;
+using Tasks.Domain.States;
 
 namespace Tasks.Application
 {
@@ -10,6 +11,7 @@ namespace Tasks.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            services.AddDomainServices();
 
             services.AddMediatR(configuration =>
                 {
@@ -21,6 +23,13 @@ namespace Tasks.Application
 
             services.AddValidatorsFromAssembly(typeof(AssemblyReference).Assembly,
                 includeInternalTypes: true);
+
+            return services;
+        }
+
+        private static IServiceCollection AddDomainServices(this IServiceCollection services)
+        {
+            services.AddScoped<StateFactory, DefaultStateFactory>();
 
             return services;
         }

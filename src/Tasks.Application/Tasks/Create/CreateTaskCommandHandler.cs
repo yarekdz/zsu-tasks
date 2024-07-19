@@ -1,6 +1,7 @@
 ﻿using Tasks.Application.Abstractions.Messaging;
 using Tasks.Domain.Abstractions.Repositories.Commands;
 using Tasks.Domain.Shared;
+using Tasks.Domain.States;
 using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
 
@@ -18,6 +19,8 @@ namespace Tasks.Application.Tasks.Create
 
         public async Task<Result<Guid>> Handle(CreateTaskCommand command, CancellationToken cancellationToken)
         {
+            var defaultStateFactory = new DefaultStateFactory();
+
             var todoTask = TodoTask.Create(
                 new TaskMainInfo(
                     command.Title,
@@ -27,7 +30,8 @@ namespace Tasks.Application.Tasks.Create
                     Description = command.Description,
                     Category = command.Category,
                     Priority = command.Priority,
-                });
+                },
+                defaultStateFactory.StartSate);
 
             await _taskCommandsRepository.CreateAsync(todoTask, cancellationToken);
 

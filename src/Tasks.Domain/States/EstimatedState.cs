@@ -12,8 +12,6 @@ public class EstimatedState : ITaskState
 
     public Result<TodoTask> StartWork(TodoTask task)
     {
-
-
         task.SetState(new WorkStartedState());
 
         return Result.Success(task);

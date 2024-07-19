@@ -96,5 +96,11 @@ namespace Tasks.Domain.Errors
                 "Action is not allowed for a task that is not completed.");
         }
 
+        public static class DomainInternal
+        {
+            public static Error IncorrectStateFactorySetup = Error.Failure("DomainInternal.IncorrectStateFactorySetup",
+                "Internal server error.");
+        }
+
     }
 }

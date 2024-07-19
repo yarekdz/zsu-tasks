@@ -57,7 +57,7 @@ namespace Tasks.Domain.ValueObjects
             int seconds = TotalDuration.Seconds;
 
 
-            string formattedString = "Duration: ";
+            string formattedString = "";
 
             if (days > 0)
             {
@@ -74,7 +74,7 @@ namespace Tasks.Domain.ValueObjects
 
             if (seconds > 0 || formattedString == "")
             {
-                formattedString += $"{seconds}s";
+                formattedString += $" {seconds}s";
             }
 
             return formattedString.Trim();

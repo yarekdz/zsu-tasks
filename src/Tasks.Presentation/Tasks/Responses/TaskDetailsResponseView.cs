@@ -9,8 +9,20 @@
         int Priority,
         Guid OwnerId,
         Guid AssigneeId,
-        DateTime? EstimatedStartDateTime,
-        DateTime? EstimatedEndDateTime,
-        //Duration? EstimatedWorkDuration,
-        string Status);
+        TaskDetailsEstimationResponseView Estimation,
+        string Status,
+        TaskDetailsStatsResponseView Stats);
+
+    public record TaskDetailsEstimationResponseView(
+        string StartDateTime,
+        string EndDateTime,
+        string? EstimatedWorkDuration);
+
+    public record TaskDetailsStatsResponseView(
+        string CreatedDate,
+        string? StartedDate,
+        string? CompletionDate,
+        string? VerifiedDate,
+        string? ApprovedDate,
+        string? ReleasedDate);
 }

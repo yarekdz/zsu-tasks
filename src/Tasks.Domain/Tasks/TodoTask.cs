@@ -40,9 +40,12 @@ namespace Tasks.Domain.Tasks
         public ITaskState State { get; private set; }
         public TodoTaskStatus Status { get; private set; }
 
-        private TodoTask(){}
+        private TodoTask()
+        {
 
-        protected TodoTask(Guid id, TaskMainInfo mainInfo)
+        }
+
+        protected TodoTask(Guid id, TaskMainInfo mainInfo, ITaskState iniTaskState)
         {
             Id = id;
             CreatedAt = DateTime.UtcNow;
@@ -50,8 +53,8 @@ namespace Tasks.Domain.Tasks
             TaskId = new TaskId(id);
             MainInfo = mainInfo;
 
-            State = new ConceptInactiveState();
-            Status = TodoTaskStatus.ConceptInactive;
+            State = iniTaskState;
+            Status = iniTaskState.Status;
 
             Stats = new TaskStatistic(TaskId)
             {
@@ -60,14 +63,13 @@ namespace Tasks.Domain.Tasks
             };
         }
 
-        public static TodoTask Create(TaskMainInfo mainInfo)
+        public static TodoTask Create(TaskMainInfo mainInfo, ITaskState iniTaskState)
         {
-            var newTask = new TodoTask(Guid.NewGuid(), mainInfo);
+            var newTask = new TodoTask(Guid.NewGuid(), mainInfo, iniTaskState);
 
-            var conceptInactiveState = new ConceptInactiveState();
-            newTask.SetState(conceptInactiveState);
+            newTask.SetState(iniTaskState);
             
-            var initStateResult = conceptInactiveState.Create(newTask, mainInfo);
+            var initStateResult = newTask.State.Create(newTask, mainInfo);
 
             if (!initStateResult.IsSuccess)
             {
@@ -83,7 +85,9 @@ namespace Tasks.Domain.Tasks
 
         public void SetState(ITaskState state)
         {
+            //todo: implement IStateFactory and verify States connection
             State = state;
+            Status = state.Status;
         }
 
         #region Task Actions
@@ -98,8 +102,6 @@ namespace Tasks.Domain.Tasks
             }
 
             Estimation = estimation;
-            Estimation.EstimatedWorkDuration =
-                Duration.Create(estimation.EstimatedStartDateTime, estimation.EstimatedEndDateTime);
         }
 
         #region v2

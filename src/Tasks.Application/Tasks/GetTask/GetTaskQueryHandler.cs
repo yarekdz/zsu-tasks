@@ -1,10 +1,6 @@
 ﻿using Tasks.Application.Abstractions.Messaging;
 using Tasks.Domain.Abstractions.Repositories.Queries;
-using Tasks.Domain.Person;
 using Tasks.Domain.Shared;
-using Tasks.Domain.Tasks;
-using Tasks.Domain.Tasks.TaskDetails;
-using Tasks.Domain.ValueObjects;
 
 namespace Tasks.Application.Tasks.GetTask
 {
@@ -19,9 +15,9 @@ namespace Tasks.Application.Tasks.GetTask
 
         public async Task<Result<GetTaskResponse>> Handle(GetTaskQuery request, CancellationToken cancellationToken)
         {
-            var taskSummary = await _taskQueriesRepository.GetMainInfoByIdAsync(request.TaskId.Value, cancellationToken);
+            var task = await _taskQueriesRepository.GetAsync(request.TaskId.Value, cancellationToken);
 
-            if (taskSummary is null)
+            if (task is null)
             {
                 return Result.Failure<GetTaskResponse>(Error.NotFound(
                     "GetTask.NotFound",
@@ -29,18 +25,14 @@ namespace Tasks.Application.Tasks.GetTask
             }
 
             return Result.Success(new GetTaskResponse(
-                taskSummary.Id,
-                new TaskId(taskSummary.TaskId),
-                taskSummary.MainInfo_Title,
-                taskSummary.MainInfo_Description,
-                TaskCategory.Create(taskSummary.MainInfo_Category),
-                Priority.Create(taskSummary.MainInfo_Priority),
-                new PersonId(taskSummary.MainInfo_OwnerId),
-                new PersonId(taskSummary.MainInfo_AssigneeId),
-                taskSummary.Estimation_EstimatedStartDateTime,
-                taskSummary.Estimation_EstimatedEndDateTime,
-                Duration.Create(taskSummary.Estimation_EstimatedStartDateTime, taskSummary.Estimation_EstimatedEndDateTime),
-                taskSummary.Status));
+                task.Id,
+                task.TaskId,
+                task.MainInfo,
+                task.MainInfo.OwnerId,
+                task.MainInfo.AssigneeId,
+                task.Estimation,
+                task.Status,
+                task.Stats));
         }
     }
 }

@@ -5,6 +5,7 @@ namespace Tasks.Domain.Tasks.TaskDetails
 {
     public class TaskStatistic : Entity
     {
+        public TaskStatistic(){}
         public TaskStatistic(TaskId taskId)
         {
             TaskId = taskId;

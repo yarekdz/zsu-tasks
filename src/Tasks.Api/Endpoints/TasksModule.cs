@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Tasks.Api.Extensions;
 using Tasks.Application.Tasks.Create;
 using Tasks.Application.Tasks.Delete;
+using Tasks.Application.Tasks.Estimate;
 using Tasks.Application.Tasks.GetAllTasks;
 using Tasks.Application.Tasks.GetReleasedTasks;
 using Tasks.Application.Tasks.GetTask;
+using Tasks.Application.Tasks.StartWork;
 using Tasks.Application.Tasks.Update;
 using Tasks.Domain.Tasks.TaskDetails;
 using Tasks.Presentation.Tasks.Requests;
@@ -25,6 +27,8 @@ namespace Tasks.Api.Endpoints
             tasks.MapPost("/", CreateTask).WithName(nameof(CreateTask));
             tasks.MapPut("/{id}", UpdateTask).WithName(nameof(UpdateTask));
             tasks.MapDelete("/{id}", DeleteTask).WithName(nameof(DeleteTask));
+            tasks.MapPost("/{id}/startWork", StartWork).WithName(nameof(StartWork));
+            tasks.MapPost("/{id}/estimate", Estimate).WithName(nameof(Estimate));
 
             tasks.MapGet("/", GetAllTasks);
             tasks.MapGet("/released", GetReleasedTasks);
@@ -35,7 +39,9 @@ namespace Tasks.Api.Endpoints
         {
             var result = await mediator.Send(new GetAllTasksQuery());
 
-            return result.IsSuccess ? TypedResults.Ok(result.Value.Adapt<TaskResponseView[]>()) : result.ToProblemDetails();
+            return result.IsSuccess
+                ? TypedResults.Ok(result.Value.Adapt<TaskResponseView[]>())
+                : result.ToProblemDetails();
         }
 
         private static async Task<Results<Ok<IEnumerable<TaskResponseView>>, ProblemHttpResult>>
@@ -43,14 +49,19 @@ namespace Tasks.Api.Endpoints
         {
             var result = await mediator.Send(new GetReleasedTasksQuery());
 
-            return result.IsSuccess ? TypedResults.Ok(result.Value.Adapt<IEnumerable<TaskResponseView>>()) : result.ToProblemDetails();
+            return result.IsSuccess
+                ? TypedResults.Ok(result.Value.Adapt<IEnumerable<TaskResponseView>>())
+                : result.ToProblemDetails();
         }
 
-        private static async Task<Results<Ok<TaskDetailsResponseView>, ProblemHttpResult>> GetTask(Guid id, IMediator mediator)
+        private static async Task<Results<Ok<TaskDetailsResponseView>, ProblemHttpResult>> GetTask(Guid id,
+            IMediator mediator)
         {
             var getTaskResult = await mediator.Send(new GetTaskQuery(new TaskId(id)));
 
-            return getTaskResult.IsSuccess ? TypedResults.Ok(getTaskResult.Value.Adapt<TaskDetailsResponseView>()) : getTaskResult.ToProblemDetails();
+            return getTaskResult.IsSuccess
+                ? TypedResults.Ok(getTaskResult.Value.Adapt<TaskDetailsResponseView>())
+                : getTaskResult.ToProblemDetails();
         }
 
         private static async Task<Results<Created<CreateTaskRequest>, ProblemHttpResult>> CreateTask(
@@ -72,6 +83,34 @@ namespace Tasks.Api.Endpoints
             IMediator mediator)
         {
             var command = request.Adapt<UpdateTaskCommand>();
+            command.TaskId = new TaskId(id);
+
+            var result = await mediator.Send(command);
+
+            return result.IsSuccess ? TypedResults.NoContent() : result.ToProblemDetails();
+        }
+
+        private static async Task<Results<Ok<EstimateResponseView>, ProblemHttpResult>> Estimate(
+            Guid id,
+            [FromBody] EstimateRequest request,
+            IMediator mediator)
+        {
+            var command = request.Adapt<EstimateCommand>();
+            command.TaskId = new TaskId(id);
+
+            var result = await mediator.Send(command);
+
+            return result.IsSuccess
+                ? TypedResults.Ok(result.Value.Adapt<EstimateResponseView>())
+                : result.ToProblemDetails();
+        }
+
+        private static async Task<Results<NoContent, ProblemHttpResult>> StartWork(
+            Guid id,
+            [FromBody] StartWorkRequest request,
+            IMediator mediator)
+        {
+            var command = request.Adapt<StartWorkCommand>();
             command.TaskId = new TaskId(id);
 
             var result = await mediator.Send(command);

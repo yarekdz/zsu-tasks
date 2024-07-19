@@ -11,10 +11,14 @@ namespace Tasks.Persistence.Repositories.Queries
     internal sealed class TaskQueriesRepository : ITaskQueriesRepository
     {
         private readonly IApplicationDbContext _dbContext;
+        private readonly StateFactory _stateFactory;
 
-        public TaskQueriesRepository(IApplicationDbContext dbContext)
+        public TaskQueriesRepository(
+            IApplicationDbContext dbContext, 
+            StateFactory stateFactory)
         {
             _dbContext = dbContext;
+            _stateFactory = stateFactory;
         }
 
         public async Task<TaskListDto[]> GetAllAsync(CancellationToken ct)
@@ -39,22 +43,15 @@ namespace Tasks.Persistence.Repositories.Queries
 
         public async Task<TodoTask?> GetAsync(Guid id, CancellationToken ct)
         {
-            return await _dbContext.Tasks
+            var task = await _dbContext.Tasks
+                .Include(t => t.Estimation)
+                .Include(t => t.Stats)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(t => t.TaskId == new TaskId(id), ct);
-        }
 
-        public async Task<TaskSummary?> GetMainInfoByIdAsync(Guid id, CancellationToken ct)
-        {
-            return await _dbContext
-                .Database
-                .SqlQuery<TaskSummary>($@"
-                    SELECT *
-                    FROM public.""Tasks"" t
-                    WHERE t.""Id"" = {id}
-                ")
-                .IgnoreQueryFilters()
-                .SingleOrDefaultAsync(ct);
+            task?.SetState(_stateFactory.GetStateBasedOnTaskStatus(task.Status));
+
+            return task;
         }
 
         public async Task<IEnumerable<TaskListDto>> GetReleasedTasksAsync(CancellationToken ct)
