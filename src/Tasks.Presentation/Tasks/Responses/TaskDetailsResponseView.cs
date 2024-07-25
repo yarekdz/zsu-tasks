@@ -3,6 +3,7 @@
     public record TaskDetailsResponseView(
         Guid Id,
         Guid TaskId,
+        bool IsDeleted,
         string Title,
         string Description,
         string Category,

@@ -27,6 +27,7 @@ namespace Tasks.Application.Tasks.GetTask
             return Result.Success(new GetTaskResponse(
                 task.Id,
                 task.TaskId,
+                task.IsDeleted,
                 task.MainInfo,
                 task.MainInfo.OwnerId,
                 task.MainInfo.AssigneeId,

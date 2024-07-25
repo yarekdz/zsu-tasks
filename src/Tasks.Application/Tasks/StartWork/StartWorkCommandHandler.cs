@@ -1,6 +1,9 @@
-﻿using Tasks.Application.Abstractions.Messaging;
+﻿using MediatR;
+using Tasks.Application.Abstractions.Messaging;
+using Tasks.Application.AuditLogs.Add;
 using Tasks.Domain.Abstractions.Repositories.Commands;
 using Tasks.Domain.Abstractions.Repositories.Queries;
+using Tasks.Domain.AuditLog;
 using Tasks.Domain.Errors;
 using Tasks.Domain.Shared;
 
@@ -10,13 +13,16 @@ namespace Tasks.Application.Tasks.StartWork
     {
         private readonly ITaskCommandsRepository _taskCommandsRepository;
         private readonly ITaskQueriesRepository _taskQueriesRepository;
+        private readonly IMediator _mediator;
 
         public StartWorkCommandHandler(
             ITaskCommandsRepository taskCommandsRepository, 
-            ITaskQueriesRepository taskQueriesRepository)
+            ITaskQueriesRepository taskQueriesRepository, 
+            IMediator mediator)
         {
             _taskCommandsRepository = taskCommandsRepository;
             _taskQueriesRepository = taskQueriesRepository;
+            _mediator = mediator;
         }
 
         public async Task<Result> Handle(StartWorkCommand command, CancellationToken cancellationToken)
@@ -36,6 +42,11 @@ namespace Tasks.Application.Tasks.StartWork
             task.StartWork();
 
             await _taskCommandsRepository.UpdateAsync(task, cancellationToken);
+
+            await _mediator.Send(new AddAuditLogCommand(
+                AuditLogAction.TaskStartWork,
+                "System",
+                new[] { task.MainInfo.Title }), cancellationToken);
 
             return Result.Success();
         }

@@ -1,6 +1,9 @@
-﻿using Tasks.Application.Abstractions.Messaging;
+﻿using MediatR;
+using Tasks.Application.Abstractions.Messaging;
+using Tasks.Application.AuditLogs.Add;
 using Tasks.Domain.Abstractions.Repositories.Commands;
 using Tasks.Domain.Abstractions.Repositories.Queries;
+using Tasks.Domain.AuditLog;
 using Tasks.Domain.Errors;
 using Tasks.Domain.Shared;
 
@@ -10,12 +13,15 @@ namespace Tasks.Application.Tasks.Delete
     {
         private readonly ITaskCommandsRepository _taskCommandsRepository;
         private readonly ITaskQueriesRepository _taskQueriesRepository;
+        private readonly IMediator _mediator;
 
         public DeleteTaskCommandHandler(
             ITaskQueriesRepository taskQueriesRepository,
-            ITaskCommandsRepository taskCommandsRepository)
+            ITaskCommandsRepository taskCommandsRepository, 
+            IMediator mediator)
         {
             _taskCommandsRepository = taskCommandsRepository;
+            _mediator = mediator;
             _taskQueriesRepository = taskQueriesRepository;
         }
 
@@ -29,6 +35,11 @@ namespace Tasks.Application.Tasks.Delete
             }
 
             await _taskCommandsRepository.DeleteTaskAsync(request.TaskId.Value, cancellationToken);
+
+            await _mediator.Send(new AddAuditLogCommand(
+                AuditLogAction.TaskDelete,
+                "System",
+                new[] { task.MainInfo.Title }), cancellationToken);
 
             return Result.Success();
         }

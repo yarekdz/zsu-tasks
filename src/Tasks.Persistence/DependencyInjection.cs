@@ -41,6 +41,9 @@ namespace Tasks.Persistence
             services.AddScoped<ITaskCommandsRepository, TaskCommandsRepository>();
             services.AddScoped<ITaskQueriesRepository, TaskQueriesRepository>();
 
+            services.AddScoped<IAuditLogsCommandsRepository, AuditLogsCommandsRepository>();
+            services.AddScoped<IAuditLogsQueriesRepository, AuditLogsQueriesRepository>();
+
             services.AddHealthChecks()
                 .AddNpgSql(npgSqlConnectionString)
                 .AddDbContextCheck<ApplicationDbContext>();

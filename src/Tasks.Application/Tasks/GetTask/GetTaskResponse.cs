@@ -7,6 +7,7 @@ namespace Tasks.Application.Tasks.GetTask;
 public record GetTaskResponse(
     Guid Id, 
     TaskId TaskId,
+    bool IsDeleted,
     TaskMainInfo MainInfo,
     PersonId OwnerId,
     PersonId AssigneeId,

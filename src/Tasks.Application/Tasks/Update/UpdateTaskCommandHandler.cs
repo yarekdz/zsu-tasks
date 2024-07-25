@@ -1,6 +1,9 @@
-﻿using Tasks.Application.Abstractions.Messaging;
+﻿using MediatR;
+using Tasks.Application.Abstractions.Messaging;
+using Tasks.Application.AuditLogs.Add;
 using Tasks.Domain.Abstractions.Repositories.Commands;
 using Tasks.Domain.Abstractions.Repositories.Queries;
+using Tasks.Domain.AuditLog;
 using Tasks.Domain.Errors;
 using Tasks.Domain.Shared;
 
@@ -10,13 +13,16 @@ namespace Tasks.Application.Tasks.Update
     {
         private readonly ITaskCommandsRepository _taskCommandsRepository;
         private readonly ITaskQueriesRepository _taskQueriesRepository;
+        private readonly IMediator _mediator;
 
         public UpdateTaskCommandHandler(
             ITaskQueriesRepository taskQueriesRepository, 
-            ITaskCommandsRepository taskCommandsRepository)
+            ITaskCommandsRepository taskCommandsRepository, 
+            IMediator mediator)
         {
             _taskQueriesRepository = taskQueriesRepository;
             _taskCommandsRepository = taskCommandsRepository;
+            _mediator = mediator;
         }
 
         public async Task<Result> Handle(UpdateTaskCommand command, CancellationToken cancellationToken)
@@ -39,6 +45,11 @@ namespace Tasks.Application.Tasks.Update
             task.SetAssignee(command.AssigneeId ?? task.MainInfo.AssigneeId);
 
             await _taskCommandsRepository.UpdateAsync(task, cancellationToken);
+
+            await _mediator.Send(new AddAuditLogCommand(
+                AuditLogAction.TaskUpdate,
+                "System",
+                new[] { task.MainInfo.Title }), cancellationToken);
 
             return Result.Success();
         }
