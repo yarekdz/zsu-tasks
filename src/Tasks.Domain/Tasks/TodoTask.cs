@@ -224,7 +224,7 @@ namespace Tasks.Domain.Tasks
             }
         }
 
-        public void SetDescription(string description)
+        public void SetDescription(string? description)
         {
             if (!string.IsNullOrEmpty(description))
             {

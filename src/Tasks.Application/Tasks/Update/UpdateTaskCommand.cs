@@ -5,12 +5,12 @@ using Tasks.Domain.ValueObjects;
 
 namespace Tasks.Application.Tasks.Update
 {
-    public record UpdateTaskCommand(
-        string Title,
-        string Description,
-        Priority Priority,
-        PersonId AssigneeId) : ICommand
+    public record UpdateTaskCommand : ICommand
     {
         public TaskId? TaskId { get; set; }
+        public string? Title { get; init; }
+        public string? Description { get; init; }
+        public Priority? Priority { get; init; }
+        public PersonId? AssigneeId { get; init; }
     }
 }

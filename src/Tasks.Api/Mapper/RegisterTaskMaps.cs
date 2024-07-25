@@ -25,6 +25,11 @@ namespace Tasks.Api.Mapper
             config.NewConfig<Priority, int>()
                 .ConstructUsing(p => p.Value);
 
+            config.NewConfig<int?, Priority>()
+                .ConstructUsing(value => Priority.Create(value));
+            config.NewConfig<Priority, int?>()
+                .ConstructUsing(p => p.Value);
+
             config.NewConfig<Guid, PersonId>()
                 .MapWith(g => new PersonId(g));
             config.NewConfig<PersonId, Guid>()
@@ -34,14 +39,6 @@ namespace Tasks.Api.Mapper
                 .MapWith(t => t.Value);
             config.NewConfig<Guid, TaskId>()
                 .ConstructUsing(p => new TaskId(p));
-
-            config.NewConfig<UpdateTaskRequest, UpdateTaskCommand>()
-                .ConstructUsing(src => new UpdateTaskCommand(
-                    src.Title,
-                    src.Description,
-                    Priority.Create(src.Priority),
-                    new PersonId(src.AssigneeId)
-                ));
 
             config.NewConfig<EstimateRequest, EstimateCommand>()
                 .ConstructUsing(src =>

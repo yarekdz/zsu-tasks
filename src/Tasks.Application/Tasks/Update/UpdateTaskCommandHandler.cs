@@ -33,10 +33,10 @@ namespace Tasks.Application.Tasks.Update
                 return Result.Failure(TaskErrors.TaskNotFound);
             }
 
-            task.SetTitle(command.Title);
-            task.SetDescription(command.Description);
-            task.SetPriority(command.Priority);
-            task.SetAssignee(command.AssigneeId);
+            task.SetTitle(command.Title ?? task.MainInfo.Title);
+            task.SetDescription(command.Description ?? task.MainInfo.Description);
+            task.SetPriority(command.Priority ?? task.MainInfo.Priority);
+            task.SetAssignee(command.AssigneeId ?? task.MainInfo.AssigneeId);
 
             await _taskCommandsRepository.UpdateAsync(task, cancellationToken);
 
