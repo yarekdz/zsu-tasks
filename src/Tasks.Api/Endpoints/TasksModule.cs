@@ -33,6 +33,7 @@ namespace Tasks.Api.Endpoints
             tasks.MapGet("/", GetAllTasks);
             tasks.MapGet("/released", GetReleasedTasks);
             tasks.MapGet("/{id}", GetTask);
+            tasks.MapGet("/{id}/history", GetTaskHistory);
         }
 
         private static async Task<Results<Ok<TaskResponseView[]>, ProblemHttpResult>> GetAllTasks(IMediator mediator)
@@ -62,6 +63,16 @@ namespace Tasks.Api.Endpoints
             return getTaskResult.IsSuccess
                 ? TypedResults.Ok(getTaskResult.Value.Adapt<TaskDetailsResponseView>())
                 : getTaskResult.ToProblemDetails();
+        }
+
+        private static async Task<Results<Ok<IEnumerable<TaskHistoryView>>, ProblemHttpResult>>
+            GetTaskHistory(Guid id, IMediator mediator)
+        {
+            var result = await mediator.Send(new GetTaskHistoryQuery(new TaskId(id)));
+
+            return result.IsSuccess
+                ? TypedResults.Ok(result.Value.Adapt<IEnumerable<TaskHistoryView>>())
+                : result.ToProblemDetails();
         }
 
         private static async Task<Results<Created<CreateTaskRequest>, ProblemHttpResult>> CreateTask(
