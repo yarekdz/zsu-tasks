@@ -69,7 +69,7 @@ namespace Tasks.Api
                 .ReportApiVersions()
                 .Build();
 
-            RouteGroupBuilder versionedGroup = app
+            var versionedGroup = app
                 .MapGroup("api/v{version:apiVersion}")
                 .WithApiVersionSet(apiVersionSet);
 
