@@ -64,7 +64,7 @@ namespace Tasks.Api
 
             var app = builder.Build();
 
-            ApiVersionSet apiVersionSet = app.NewApiVersionSet()
+            var apiVersionSet = app.NewApiVersionSet()
                 .HasApiVersion(new ApiVersion(1))
                 .ReportApiVersions()
                 .Build();
