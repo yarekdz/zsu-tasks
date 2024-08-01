@@ -1,0 +1,47 @@
+name: Trigger auto deployment for app-tasks-api-eastus-dev-001
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ develop ]
+    paths:
+    - '**'
+    - '.github/workflows/app-tasks-api-eastus-dev-001-AutoDeployTrigger-60ea6df5-3fdb-4368-aab5-ef263ed2959c.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.APPTASKSAPIEASTUSDEV001_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.APPTASKSAPIEASTUSDEV001_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.APPTASKSAPIEASTUSDEV001_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }} 
+          registryUrl: tasksapi.azurecr.io
+          registryUsername: ${{ secrets.APPTASKSAPIEASTUSDEV001_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.APPTASKSAPIEASTUSDEV001_REGISTRY_PASSWORD }}
+          containerAppName: app-tasks-api-eastus-dev-001
+          resourceGroup: rg-zsu-eastus-dev-001
+          imageToBuild: tasksapi.azurecr.io/app-tasks-api-eastus-dev-001:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
