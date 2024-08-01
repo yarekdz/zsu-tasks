@@ -10,6 +10,7 @@ using Tasks.Application.Tasks.Estimate;
 using Tasks.Application.Tasks.GetAllTasks;
 using Tasks.Application.Tasks.GetReleasedTasks;
 using Tasks.Application.Tasks.GetTask;
+using Tasks.Application.Tasks.GetTaskHistory;
 using Tasks.Application.Tasks.StartWork;
 using Tasks.Application.Tasks.Update;
 using Tasks.Domain.Tasks.TaskDetails;

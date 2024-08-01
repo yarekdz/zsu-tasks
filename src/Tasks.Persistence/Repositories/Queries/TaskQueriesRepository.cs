@@ -2,6 +2,7 @@
 using Tasks.Application.Abstractions.Data;
 using Tasks.Domain.Abstractions.Dtos.Tasks;
 using Tasks.Domain.Abstractions.Repositories.Queries;
+using Tasks.Domain.AuditLog;
 using Tasks.Domain.States;
 using Tasks.Domain.Tasks;
 using Tasks.Domain.Tasks.TaskDetails;
@@ -72,6 +73,26 @@ namespace Tasks.Persistence.Repositories.Queries
                     WHERE 
                         t.""IsDeleted"" = False 
                         AND t.""Status"" = {TodoTaskStatus.Released}")
+                .ToListAsync(ct);
+        }
+
+        public async Task<IEnumerable<AuditLog>> GetAuditLogAsync(Guid taskId, CancellationToken ct)
+        {
+            return await _dbContext
+                .Database.SqlQuery<AuditLog>($@"
+                    SELECT 
+                        ""Id"",
+                        ""Action"",
+                        ""Message"",
+                        ""CreatedAt"",
+                        ""CreatedBy"",
+                        ""IsDeleted"",
+                        ""ObjectRelateId""
+                    FROM 
+                        PUBLIC.""AuditLogs"" a
+                    WHERE
+                        a.""ObjectRelateId"" = {taskId}
+                    ORDER BY a.""CreatedAt"" ASC")
                 .ToListAsync(ct);
         }
     }

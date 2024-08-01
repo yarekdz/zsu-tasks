@@ -12,6 +12,7 @@ namespace Tasks.Persistence.Configurations
 
             builder.Property(p => p.Action).HasMaxLength(55).IsRequired();
             builder.Property(p => p.Message).HasMaxLength(255).IsRequired();
+            builder.Property(p => p.ObjectRelateId).IsRequired();
         }
     }
 }

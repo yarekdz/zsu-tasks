@@ -11,5 +11,6 @@ namespace Tasks.Domain.AuditLog
 
         public string Action { get; set; }
         public string Message { get; set; }
+        public Guid ObjectRelateId { get; set; }
     }
 }

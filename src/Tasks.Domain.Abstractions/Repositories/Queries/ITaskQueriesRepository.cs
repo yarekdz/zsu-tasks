@@ -7,5 +7,6 @@ namespace Tasks.Domain.Abstractions.Repositories.Queries
     {
         Task<TaskListDto[]> GetAllAsync(CancellationToken ct);
         Task<IEnumerable<TaskListDto>> GetReleasedTasksAsync(CancellationToken ct);
+        Task<IEnumerable<AuditLog.AuditLog>> GetAuditLogAsync(Guid taskId, CancellationToken ct);
     }
 }
